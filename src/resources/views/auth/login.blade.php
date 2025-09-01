@@ -7,7 +7,7 @@
 @section('content')
 <div class="login-form__content">
   <div class="login-form__heading">
-    <h2>ログイン</h2>
+    <h2>管理者ログイン</h2>
   </div>
   <form class="form" action="/login" method="post">
     @csrf
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="form__button">
-      <button class="form__button-submit" type="submit">ログイン</button>
+      <button class="form__button-submit" type="submit">管理者ログインする</button>
     </div>
   </form>
   <div class="register__link">
