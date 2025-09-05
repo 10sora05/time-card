@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\UserLoginController;
+use App\Http\Controllers\User\Auth\UserLoginController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\User\Auth\UserRegisterController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,8 +34,12 @@ Route::prefix('admin')->group(function () {
     Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
     Route::middleware('auth:admin')->group(function () {
-        Route::get('/attendances', function () {
+        Route::get('/admin.attendances', function () {
             return view('admin.attendances'); // 管理者用勤怠ページ
         })->name('admin.attendances');
     });
 });
+
+Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
+Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
+

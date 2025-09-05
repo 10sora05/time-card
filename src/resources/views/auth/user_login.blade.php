@@ -9,7 +9,7 @@
   <div class="login-form__heading">
     <h2>ログイン</h2>
   </div>
-  <form class="form" action="/admin.login" method="post">
+  <form method="POST" action="{{ route('login') }}">
     @csrf
     <div class="form__group">
       <div class="form__group-title">
@@ -46,7 +46,7 @@
     </div>
   </form>
   <div class="register__link">
-    <a class="register__button-submit" href="/register">会員登録の方はこちら</a>
+    <a class="register__button-submit" href="/user_register">会員登録の方はこちら</a>
   </div>
 </div>
 @endsection

@@ -22,13 +22,13 @@
           <ul class="header-nav">
             @if (Auth::check())
             <li class="header-nav__item">
-              <a class="header-nav__link" href="/mypage">勤怠</a>
-            </li>
-            <li class="header-nav__item">
               <a class="header-nav__link" href="/mypage">勤怠一覧</a>
             </li>
             <li class="header-nav__item">
-              <a class="header-nav__link" href="/mypage">申請</a>
+              <a class="header-nav__link" href="/mypage">スタッフ一覧</a>
+            </li>
+            <li class="header-nav__item">
+              <a class="header-nav__link" href="/mypage">申請一覧</a>
             </li>
             <li class="header-nav__item">
               <form class="form" action="/logout" method="post">

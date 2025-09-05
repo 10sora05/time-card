@@ -5,7 +5,7 @@
 .header__inner {
     margin: 0 auto;
     padding: 20px 15px;
-    max-width: 1230px;
+    max-width: 100%;
 }
 
 .header-utilities {
@@ -22,13 +22,17 @@
 }
 
 .header-utilities nav {
-    width: 18%;
+    width: 34%;
 }
 
 .header-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.header-nav__item {
+    width: 20%;
 }
 
 .header-nav__link {
