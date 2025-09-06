@@ -34,10 +34,12 @@
             {{-- 出勤前は表示なし --}}
         @elseif ($attendance && !$endTime)
             @if ($breakStart && !$breakEnd)
-                <div class="status-note">休憩中</div>
+                <div class="note">休憩中</div>
             @else
-                <div class="status-note">出勤中</div>
+                <div class="note">出勤中</div>
             @endif
+        @elseif ($attendance && $endTime)
+            <div class="note">退勤済</div>
         @endif
 
         {{-- 日付と曜日 --}}
