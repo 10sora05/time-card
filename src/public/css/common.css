@@ -47,3 +47,8 @@
     font-size: 16px;
     cursor: pointer;
 }
+
+.content {
+    background-color: #f1f0f2;
+    min-height: 100vh;
+}

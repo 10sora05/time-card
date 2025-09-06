@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-<div class="attendance__content">
+<div class="content">
   <div class="attendance__date">
     <span>
       <a href="{{ route('attendance.index', ['date' => $previousDate]) }}">← 前日</a>
