@@ -7,49 +7,51 @@
 
 @section('content')
 <div class="content">
-  <div class="attendance__date">
-    <span>
-      <a href="{{ route('attendance.index', ['date' => $previousDate]) }}">← 前日</a>
-    </span>
+  <div class="attendance__content">
+    <h2 class="attendance__title">{{ \Carbon\Carbon::parse($selectedDate)->format('Y年m月d日') }}の勤怠</h2>
+    <div class="attendance__date">
+      <span>
+        <a href="{{ route('admin.attendances', ['date' => $previousDate]) }}" class="page-turn">← 前日</a>
+      </span>
 
-    <form method="GET" action="{{ route('attendance.index') }}" id="dateForm">
-        <label for="fake-date">📅</label>
+      <form method="GET" action="{{ route('admin.attendances') }}" id="dateForm">
+          <label for="fake-date">📅</label>
 
-        <!-- 表示専用の span（ユーザーが見る部分） -->
-        <span id="fake-date"
-              style="cursor: pointer; padding: 6px 10px; display: inline-block;">
-            {{ \Carbon\Carbon::parse($selectedDate)->format('Y/m/d') }}
-        </span>
+          <!-- 表示専用の span（ユーザーが見る部分） -->
+          <span id="fake-date" class="attendance__date-title">
+              {{ \Carbon\Carbon::parse($selectedDate)->format('Y/m/d') }}
+          </span>
 
-        <!-- 実際に送信される hidden input -->
-        <input type="hidden" id="date" name="date" value="{{ $selectedDate }}">
-    </form>
+          <!-- 実際に送信される hidden input -->
+          <input type="hidden" id="date" name="date" value="{{ $selectedDate }}">
+      </form>
 
-    <span>
-      <a href="{{ route('attendance.index', ['date' => $nextDate]) }}">翌日 →</a>
-    </span>
-  </div>
-  <div class="attendance-table">
-    <table class="attendance-table__inner">
-      <tr class="attendance-table__row">
-        <th class="attendance-table__header">名前</th>
-        <th class="attendance-table__header">出勤</th>
-        <th class="attendance-table__header">退勤</th>
-        <th class="attendance-table__header">休憩</th>
-        <th class="attendance-table__header">合計</th>
-        <th class="attendance-table__header">詳細</th>
-      </tr>
-      @foreach ($attendances as $attendance)
-      <tr class="attendance-table__row">
-          <td>{{ $attendance->employee_name }}</td>
-          <td>{{ $attendance->start_time }}</td>
-          <td>{{ $attendance->end_time }}</td>
-          <td>{{ $attendance->break_minutes }}分</td>
-          <td>{{ $attendance->formatted_total_time ?? '未計算' }}</td>
-          <td><a href="#">詳細</a></td>
-      </tr>
-      @endforeach
-    </table>
+      <span>
+        <a href="{{ route('admin.attendances', ['date' => $nextDate]) }}" class="page-turn">翌日 →</a>
+      </span>
+    </div>
+    <div class="attendance-table">
+      <table class="attendance-table__inner">
+        <tr class="attendance-table__row">
+          <th class="attendance-table__header">名前</th>
+          <th class="attendance-table__header">出勤</th>
+          <th class="attendance-table__header">退勤</th>
+          <th class="attendance-table__header">休憩</th>
+          <th class="attendance-table__header">合計</th>
+          <th class="attendance-table__header">詳細</th>
+        </tr>
+        @foreach ($attendances as $attendance)
+        <tr class="attendance-table__row">
+            <td class="attendance-table__td">{{ $attendance->employee_name }}</td>
+            <td class="attendance-table__td">{{ $attendance->start_time }}</td>
+            <td class="attendance-table__td">{{ $attendance->end_time }}</td>
+            <td class="attendance-table__td">{{ $attendance->break_minutes }}分</td>
+            <td class="attendance-table__td">{{ $attendance->formatted_total_time ?? '未計算' }}</td>
+            <td class="attendance-table__td"><a href="#" class="detail">詳細</a></td>
+        </tr>
+        @endforeach
+      </table>
+    </div>
   </div>
 </div>
 @endsection

@@ -9,13 +9,20 @@ use Carbon\Carbon;
 
 class AdminAttendanceController extends Controller
 {
-    // 管理者用勤怠一覧表示
     public function index(Request $request)
     {
-        $date = $request->input('date', Carbon::now()->toDateString());
+        $selectedDate = $request->input('date', Carbon::today()->toDateString());
 
-        $attendances = Attendance::where('work_date', $date)->get();
+        $previousDate = Carbon::parse($selectedDate)->subDay()->toDateString();
+        $nextDate = Carbon::parse($selectedDate)->addDay()->toDateString();
 
-        return view('admin.attendance.index', compact('attendances', 'date'));
+        $attendances = Attendance::whereDate('work_date', $selectedDate)->get();
+
+        return view('admin.attendances', compact(
+            'selectedDate',
+            'previousDate',
+            'nextDate',
+            'attendances'
+        ));
     }
 }

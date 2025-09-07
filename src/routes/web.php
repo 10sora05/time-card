@@ -25,7 +25,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
     Route::middleware('auth:admin')->group(function () {
-        Route::get('/attendances', [AttendanceController::class, 'adminIndex'])->name('admin.attendances');
+        Route::get('/attendances', [AdminAttendanceController::class, 'index'])->name('admin.attendances');
     });
 });
 
