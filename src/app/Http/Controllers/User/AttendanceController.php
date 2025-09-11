@@ -13,17 +13,20 @@ class AttendanceController extends Controller
     public function index()
     {
         $now = Carbon::now();
-    $user = Auth::user();
+        $user = Auth::user();
 
-    $attendance = Attendance::where('employee_name', $user->name)
-        ->whereDate('work_date', $now->toDateString())
-        ->first();
+        $attendance = Attendance::where('employee_name', $user->name)
+            ->whereDate('work_date', $now->toDateString())
+            ->first();
 
-    // 曜日の配列
-    $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-    $weekday = $weekdays[$now->dayOfWeek]; // 0（日曜）〜6（土曜）
+        // 曜日の配列
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $weekday = $weekdays[$now->dayOfWeek];
 
-    return view('attendance.index', compact('now', 'attendance', 'weekday'));
+        // 勤務外判定（9:00〜18:00 の間以外は勤務外）
+        $isOutsideWorkHours = $now->lt(Carbon::createFromTime(9, 0)) || $now->gt(Carbon::createFromTime(18, 0));
+
+        return view('attendance.index', compact('now', 'attendance', 'weekday', 'isOutsideWorkHours'));
     }
 
     public function clockIn()
@@ -107,4 +110,47 @@ class AttendanceController extends Controller
 
         return redirect()->back()->with('success', '休憩終了しました。');
     }
+
+    public function list(Request $request)
+    {
+        $user = Auth::user();
+        $now = Carbon::now();
+
+        // 対象月（クエリまたは今月）
+        $targetMonth = $request->input('month', $now->format('Y-m'));
+        $target = Carbon::parse($targetMonth);
+
+        $startOfMonth = $target->copy()->startOfMonth();
+        $endOfMonth = $target->copy()->endOfMonth();
+
+        // 勤怠データ取得（社員名＆日付）を日付でキー付け
+        $attendances = Attendance::where('employee_name', $user->name)
+            ->whereBetween('work_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->orderBy('work_date')
+            ->get()
+            ->keyBy('work_date');
+
+        // 表示用データ（日付・曜日・勤怠）を作成
+        $days = [];
+        $weekdaysJP = ['日','月','火','水','木','金','土'];
+
+        for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
+            $dateStr = $date->toDateString();
+            $days[] = [
+                'date' => $dateStr,                                // 2025-09-01
+                'formatted' => $date->format('m/d'),               // 09/01
+                'weekday' => $weekdaysJP[$date->dayOfWeek],        // 月など
+                'attendance' => $attendances->get($dateStr),       // 勤怠データ（null含む）
+            ];
+        }
+
+        return view('attendance.list', [
+            'days' => $days,
+            'targetMonth' => $target->format('Y-m'),
+            'displayMonth' => $target->format('Y/m'),
+            'prevMonth' => $target->copy()->subMonth()->format('Y-m'),
+            'nextMonth' => $target->copy()->addMonth()->format('Y-m'),
+        ]);
+    }
+
 }

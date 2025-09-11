@@ -2,7 +2,6 @@
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/index.css') }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endsection
 
 @section('content')
@@ -31,13 +30,17 @@
 
         {{-- ステータス表示（画面上部） --}}
         @if (!$attendance)
-            {{-- 出勤前は表示なし --}}
+            @if ($isOutsideWorkHours)
+                <div class="note">勤務外</div>
+            @endif
+
         @elseif ($attendance && !$endTime)
             @if ($breakStart && !$breakEnd)
                 <div class="note">休憩中</div>
             @else
                 <div class="note">出勤中</div>
             @endif
+
         @elseif ($attendance && $endTime)
             <div class="note">退勤済</div>
         @endif
@@ -72,15 +75,15 @@
                         <button type="submit" class="btn-custom-black">休憩戻</button>
                     </form>
                 @else
-                    <form method="POST" action="{{ route('attendance.break_start') }}" style="display:inline-block;">
-                        @csrf
-                        <button type="submit" class="btn-custom-white">休憩入</button>
-                    </form>
+                <form method="POST" action="{{ route('attendance.clockout') }}" style="display:inline-block;">
+                    @csrf
+                    <button type="submit" class="btn-custom-black">退勤</button>
+                </form>
 
-                    <form method="POST" action="{{ route('attendance.clockout') }}" style="display:inline-block;">
-                        @csrf
-                        <button type="submit" class="btn-custom-black">退勤</button>
-                    </form>
+                <form method="POST" action="{{ route('attendance.break_start') }}" style="display:inline-block;">
+                    @csrf
+                    <button type="submit" class="btn-custom-white">休憩入</button>
+                </form>
                 @endif
 
             @else

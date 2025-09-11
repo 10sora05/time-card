@@ -41,3 +41,5 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/attendance/break_start', [AttendanceController::class, 'breakStart'])->name('attendance.break_start');
     Route::post('/attendance/break_end', [AttendanceController::class, 'breakEnd'])->name('attendance.break_end');
 });
+
+Route::get('/attendance/list', [\App\Http\Controllers\User\AttendanceController::class, 'list'])->name('attendance.list');
