@@ -82,7 +82,9 @@
                         @endif
                     </td class="list-table__td">
 
-                    <td class="list-table__td"><a href="#" class="detail">詳細</a></td>
+                    <td class="list-table__td">
+                        <a href="route('attendance.edit', ['id' => $day['attendance']->id])" class="detail">詳細</a>
+                    </td>
                 </tr>
                 @endforeach
             </table>

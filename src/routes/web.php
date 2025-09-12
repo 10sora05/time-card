@@ -12,27 +12,18 @@ Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login
 Route::post('/login', [UserLoginController::class, 'login']);
 Route::post('/logout', [UserLoginController::class, 'logout'])->name('logout');
 
-// 一般ユーザー用勤怠（出勤打刻）
-Route::middleware('auth:web')->group(function () {
-    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clockin');
-});
-
 // 管理者用ルート
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
     Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
-
-    Route::middleware('auth:admin')->group(function () {
-        Route::get('/attendances', [AdminAttendanceController::class, 'index'])->name('admin.attendances');
-    });
 });
 
 // ユーザー登録
 Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
 Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
 
+// 一般ユーザー用勤怠ルート（すべてまとめて定義）
 Route::middleware('auth:web')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
 
@@ -40,6 +31,8 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/attendance/clockout', [AttendanceController::class, 'clockOut'])->name('attendance.clockout');
     Route::post('/attendance/break_start', [AttendanceController::class, 'breakStart'])->name('attendance.break_start');
     Route::post('/attendance/break_end', [AttendanceController::class, 'breakEnd'])->name('attendance.break_end');
-});
 
-Route::get('/attendance/list', [\App\Http\Controllers\User\AttendanceController::class, 'list'])->name('attendance.list');
+    Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
+    Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+    Route::put('/attendance/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
+});

@@ -18,15 +18,22 @@ class CreateattendancesTable extends Migration
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
 
-        // 休憩時間（入り・戻り時間）
+            // 休憩時間（入り・戻り時間）
             $table->time('break_start_time')->nullable();
             $table->time('break_end_time')->nullable();
+
+            // 休憩2（入り・戻り時間）
+            $table->time('break2_start_time')->nullable();
+            $table->time('break2_end_time')->nullable();
 
             // 休憩時間（分単位を想定 → integer）
             $table->integer('break_minutes')->nullable();
 
             // 合計労働時間（分単位）
             $table->integer('total_minutes')->nullable();
+
+            // 備考
+            $table->text('note')->nullable();
 
             // 勤務日（検索用）
             $table->date('work_date');
