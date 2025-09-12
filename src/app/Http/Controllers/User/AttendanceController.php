@@ -34,15 +34,17 @@ class AttendanceController extends Controller
         $now = Carbon::now();
         $user = Auth::user();
 
-        // すでに出勤済みかチェック
+        // 出勤済みか確認
         $exists = Attendance::where('employee_name', $user->name)
             ->whereDate('work_date', $now->toDateString())
             ->exists();
 
-        if ($exists) {
+        // 本番環境では1回しか打刻できないように制限
+        if (app()->environment('production') && $exists) {
             return redirect()->back()->with('error', '本日はすでに出勤済みです。');
         }
 
+        // 出勤記録を作成
         Attendance::create([
             'employee_name' => $user->name,
             'start_time' => $now->format('H:i:s'),
@@ -151,6 +153,27 @@ class AttendanceController extends Controller
             'prevMonth' => $target->copy()->subMonth()->format('Y-m'),
             'nextMonth' => $target->copy()->addMonth()->format('Y-m'),
         ]);
+    }
+
+    public function edit($id)
+    {
+        $attendance = Attendance::findOrFail($id);
+        return view('attendance.detail', compact('attendance'));
+    }
+
+    public function update(UpdateAttendanceRequest $request, $id)
+    {
+        $attendance = Attendance::findOrFail($id);
+
+        $attendance->update($request->validated());
+
+        return redirect()->route('attendance.show', $id)->with('success', '勤怠情報を更新しました。');
+    }
+    
+    public function show($id)
+    {
+        $attendance = Attendance::findOrFail($id);
+        return view('attendance.show', compact('attendance'));
     }
 
 }
