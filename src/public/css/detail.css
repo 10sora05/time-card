@@ -1,0 +1,47 @@
+.container {
+    width: 65%;
+    padding-top: 20px;
+    margin: 0 auto;
+}
+
+.detail-table {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.detail-table__inner {
+    width: 100%;
+}
+
+.detail-table__row {
+    border-bottom: 3px solid #ddd;
+}
+
+.detail-table__th {
+    padding: 20px 0;
+    color: #737373;
+}
+
+.detail-table__td {
+    padding: 20px 0;
+}
+
+.detail-btn {
+    text-align: right;
+    margin: 30px 0;
+}
+
+.custom-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    font-size: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-button:hover {
+    background-color: #737373;
+}

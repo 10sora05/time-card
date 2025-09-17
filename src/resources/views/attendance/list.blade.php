@@ -38,9 +38,9 @@
                     <th class="list-table__header">詳細</th>
                 </tr>
                 @foreach ($days as $day)
-                <tr>
-                    {{-- 日付＋曜日 --}}
-                    <td>{{ $day['formatted'] }}（{{ $day['weekday'] }}）</td>
+                <tr class="list-table__row">
+
+                <td class="list-table__td">{{ $day['formatted'] }}（{{ $day['weekday'] }}）</td>
 
                     <td class="list-table__td">
                         @if (!empty($day['attendance']) && $day['attendance']->start_time)
@@ -80,10 +80,14 @@
                         @else
                             -
                         @endif
-                    </td class="list-table__td">
+                    </td>
 
                     <td class="list-table__td">
-                        <a href="route('attendance.edit', ['id' => $day['attendance']->id])" class="detail">詳細</a>
+                        @if (!empty($day['attendance']))
+                            <a href="{{ route('attendance.show', $day['attendance']->id) }}" class="detail-a">詳細</a>
+                        @else
+                            -
+                        @endif
                     </td>
                 </tr>
                 @endforeach

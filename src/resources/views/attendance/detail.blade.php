@@ -5,63 +5,71 @@
 @endsection
 
 @section('content')
-<div class="container mt-4">
-    <h2>勤怠詳細</h2>
+<div class="content">
+    <div class="container">
+        <h2>勤怠詳細</h2>
 
         <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
             @csrf
             @method('PUT')
 
-        {{-- 名前 --}}
-        <div class="form-group">
-            <label>名前</label>
-            <p>{{ $attendance->employee_name }}</p>
-        </div>
+            <div class="detail-table">
+                <table class="detail-table__inner">
+                    <tr class="detail-table__row">
+                        <th class="detail-table__th"><label>名前</label></th>
+                        <td class="detail-table__td">{{ $attendance->employee_name }}</td>
+                    </tr>
 
-        {{-- 日付 --}}
-        <div class="form-group">
-            <label>日付</label>
-            <p>{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</p>
-        </div>
+                    <tr class="detail-table__row">
+                        <th class="detail-table__th"><label>日付</label></th>
+                        <td class="detail-table__td">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</td>
+                    </tr>
 
-        {{-- 出勤・退勤 --}}
-        <div class="form-group">
-            <label>出勤・退勤</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="time" name="start_time" value="{{ old('start_time', $attendance->start_time) }}" required>
-                <span>～</span>
-                <input type="time" name="end_time" value="{{ old('end_time', $attendance->end_time) }}" required>
+                    <tr class="detail-table__row">
+                        <th class="detail-table__th"><label>出勤・退勤</label></th>
+                        <td class="detail-table__td">
+                            <input type="time" name="start_time"
+                                step="60"
+                                value="{{ old('start_time', \Carbon\Carbon::parse($attendance->start_time)->format('H:i')) }}"
+                                required>
+                            ～
+                            <input type="time" name="end_time"
+                                step="60"
+                                value="{{ old('end_time', \Carbon\Carbon::parse($attendance->end_time)->format('H:i')) }}"
+                                required>
+                        </td>
+                    </tr>
+
+                    <tr class="detail-table__row">
+                        <th class="detail-table__th"><label>休憩</label></th>
+                        <td class="detail-table__td">
+                            <input type="time" name="break_start_time" value="{{ old('break_start_time', $attendance->break_start_time) }}">
+                            ～
+                            <input type="time" name="break_end_time" value="{{ old('break_end_time', $attendance->break_end_time) }}">
+                        </td>
+                    </tr>
+
+                    <tr class="detail-table__row">
+                        <th class="detail-table__th"><label>休憩2</label></th>
+                        <td class="detail-table__td">
+                            <input type="time" name="break2_start_time" value="{{ old('break2_start_time', $attendance->break2_start_time) }}">
+                            ～
+                            <input type="time" name="break2_end_time" value="{{ old('break2_end_time', $attendance->break2_end_time) }}">
+                        </td>
+                    </tr>
+
+                    <tr class="detail-table__row">
+                        <th class="detail-table__th"><label>備考</label></th>
+                        <td class="detail-table__td">
+                            <textarea name="note" rows="3" style="width: 100%;">{{ old('note', $attendance->note) }}</textarea>
+                        </td>
+                    </tr>
+                </table>
             </div>
-        </div>
-
-        {{-- 休憩 --}}
-        <div class="form-group">
-            <label>休憩</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="time" name="break_start_time" value="{{ old('break_start_time', $attendance->break_start_time) }}">
-                <span>～</span>
-                <input type="time" name="break_end_time" value="{{ old('break_end_time', $attendance->break_end_time) }}">
+            <div class="detail-btn">
+                <button type="submit" class="custom-button">修正</button>
             </div>
-        </div>
-
-        {{-- 休憩2 --}}
-        <div class="form-group">
-            <label>休憩2</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="time" name="break2_start_time" value="{{ old('break2_start_time', $attendance->break2_start_time) }}">
-                <span>～</span>
-                <input type="time" name="break2_end_time" value="{{ old('break2_end_time', $attendance->break2_end_time) }}">
-            </div>
-        </div>
-
-        {{-- 備考 --}}
-        <div class="form-group">
-            <label>備考</label>
-            <textarea name="note" class="form-control" rows="3">{{ old('note', $attendance->note) }}</textarea>
-        </div>
-
-        {{-- 修正ボタン --}}
-        <button type="submit" class="btn btn-primary">修正</button>
-    </form>
+        </form>
+    </div>
 </div>
 @endsection

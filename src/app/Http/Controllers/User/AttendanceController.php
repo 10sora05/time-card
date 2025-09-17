@@ -173,7 +173,7 @@ class AttendanceController extends Controller
     public function show($id)
     {
         $attendance = Attendance::findOrFail($id);
-        return view('attendance.show', compact('attendance'));
+        return view('attendance.detail', compact('attendance'));
     }
 
 }

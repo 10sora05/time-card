@@ -1,5 +1,5 @@
 .list__content {
-    width: 70%;
+    width: 65%;
     padding-top: 20px;
     margin: 0 auto;
     color: #737373;
@@ -26,7 +26,7 @@
 
 .month-nav label {
     font-weight: bold;
-    color: #333;
+    color: #000;
 }
 
 .list-table {
@@ -44,7 +44,7 @@
 }
 
 .list-table__header {
-    padding: 20px;
+    padding: 15px;
     width: 16%;
     font-weight: bold;
 }
@@ -52,4 +52,10 @@
 .list-table__td {
     padding: 8px;
     width: 16%;
+}
+
+.detail-a {
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
 }
