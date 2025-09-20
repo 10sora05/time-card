@@ -28,6 +28,19 @@
                 : null;
         @endphp
 
+        @php
+            $breakStart1 = isset($attendance->break_start_time) ? Carbon::createFromFormat('H:i:s', $attendance->break_start_time) : null;
+            $breakEnd1 = isset($attendance->break_end_time) ? Carbon::createFromFormat('H:i:s', $attendance->break_end_time) : null;
+
+            $breakStart2 = isset($attendance->break2_start_time) ? Carbon::createFromFormat('H:i:s', $attendance->break2_start_time) : null;
+            $breakEnd2 = isset($attendance->break2_end_time) ? Carbon::createFromFormat('H:i:s', $attendance->break2_end_time) : null;
+
+            // 休憩中判定（どちらかの休憩開始時間はあり、終了時間がまだなら休憩中）
+            $isOnBreak = 
+                ($breakStart1 && !$breakEnd1) || 
+                ($breakStart2 && !$breakEnd2);
+        @endphp
+
         {{-- ステータス表示（画面上部） --}}
         @if (!$attendance)
             @if ($isOutsideWorkHours)
@@ -35,7 +48,7 @@
             @endif
 
         @elseif ($attendance && !$endTime)
-            @if ($breakStart && !$breakEnd)
+            @if ($isOnBreak)
                 <div class="note">休憩中</div>
             @else
                 <div class="note">出勤中</div>
@@ -48,6 +61,15 @@
         {{-- 日付と曜日 --}}
         <p class="data">{{ $now->format('Y年m月d日') }}（{{ $weekday }}）</p>
         <p class="data_time">{{ $now->format('H:i') }}</p>
+
+        {{-- 勤務時間と休憩時間の表示 --}}
+        @if ($workDuration)
+            <p class="data">勤務時間：{{ $workDuration->format('%H時間%i分') }}</p>
+        @endif
+
+        @if ($breakDuration)
+            <p class="data">休憩時間：{{ $breakDuration->format('%H時間%i分') }}</p>
+        @endif
 
         {{-- フラッシュメッセージ --}}
         @if(session('success'))
@@ -68,13 +90,13 @@
 
             @elseif ($attendance && !$endTime)
                 {{-- 出勤中 --}}
-                @if ($breakStart && !$breakEnd)
-                    {{-- 休憩中 --}}
-                    <form method="POST" action="{{ route('attendance.break_end') }}">
-                        @csrf
-                        <button type="submit" class="btn-custom-black">休憩戻</button>
-                    </form>
-                @else
+            @if ($isOnBreak)
+                {{-- 休憩中 --}}
+                <form method="POST" action="{{ route('attendance.break_end') }}">
+                    @csrf
+                    <button type="submit" class="btn-custom-black">休憩戻</button>
+                </form>
+            @else
                 <form method="POST" action="{{ route('attendance.clockout') }}" style="display:inline-block;">
                     @csrf
                     <button type="submit" class="btn-custom-black">退勤</button>
@@ -84,7 +106,7 @@
                     @csrf
                     <button type="submit" class="btn-custom-white">休憩入</button>
                 </form>
-                @endif
+            @endif
 
             @else
                 {{-- 退勤済み --}}

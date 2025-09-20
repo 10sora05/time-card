@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 
 class AttendanceController extends Controller
 {
@@ -26,7 +27,54 @@ class AttendanceController extends Controller
         // 勤務外判定（9:00〜18:00 の間以外は勤務外）
         $isOutsideWorkHours = $now->lt(Carbon::createFromTime(9, 0)) || $now->gt(Carbon::createFromTime(18, 0));
 
-        return view('attendance.index', compact('now', 'attendance', 'weekday', 'isOutsideWorkHours'));
+        //  勤務時間と休憩時間の計算ロジック
+        $workDuration = null;
+        $breakDuration = null;
+
+        if ($attendance) {
+            $startTime = $attendance->start_time ? Carbon::createFromFormat('H:i:s', $attendance->start_time) : null;
+            $endTime = $attendance->end_time ? Carbon::createFromFormat('H:i:s', $attendance->end_time) : null;
+
+            // 休憩1
+            $breakStart1 = $attendance->break_start_time ? Carbon::createFromFormat('H:i:s', $attendance->break_start_time) : null;
+            $breakEnd1 = $attendance->break_end_time ? Carbon::createFromFormat('H:i:s', $attendance->break_end_time) : null;
+
+            // 休憩2
+            $breakStart2 = $attendance->break2_start_time ? Carbon::createFromFormat('H:i:s', $attendance->break2_start_time) : null;
+            $breakEnd2 = $attendance->break2_end_time ? Carbon::createFromFormat('H:i:s', $attendance->break2_end_time) : null;
+
+            // 休憩の合計秒数
+            $totalBreakSeconds = 0;
+
+            if ($breakStart1 && $breakEnd1 && $breakEnd1->gt($breakStart1)) {
+                $totalBreakSeconds += $breakEnd1->diffInSeconds($breakStart1);
+            }
+
+            if ($breakStart2 && $breakEnd2 && $breakEnd2->gt($breakStart2)) {
+                $totalBreakSeconds += $breakEnd2->diffInSeconds($breakStart2);
+            }
+
+            // 休憩時間（CarbonIntervalに変換）
+            if ($totalBreakSeconds > 0) {
+                $breakDuration = CarbonInterval::seconds($totalBreakSeconds);
+            }
+
+            // 勤務時間（休憩を除く）
+            if ($startTime && $endTime && $endTime->gt($startTime)) {
+                $totalWorkSeconds = $endTime->diffInSeconds($startTime);
+                $workSeconds = max(0, $totalWorkSeconds - $totalBreakSeconds);
+                $workDuration = CarbonInterval::seconds($workSeconds);
+            }
+        }
+
+        return view('attendance.index', compact(
+            'now',
+            'attendance',
+            'weekday',
+            'isOutsideWorkHours',
+            'workDuration',
+            'breakDuration'
+        ));
     }
 
     public function clockIn()
@@ -76,7 +124,6 @@ class AttendanceController extends Controller
 
     public function breakStart()
     {
-        // 休憩開始処理の例（モデルやDB設計に応じてカスタマイズしてください）
         $now = Carbon::now();
         $user = Auth::user();
 
@@ -88,11 +135,32 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', '出勤記録がありません。');
         }
 
-        $attendance->break_start_time = $now->format('H:i:s'); // break_start_time カラムを追加している場合
-        $attendance->save();
+        // 1回目の休憩が未記録なら
+        if (!$attendance->break_start_time) {
+            $attendance->break_start_time = $now->format('H:i:s');
+            $attendance->save();
+            return redirect()->back()->with('success', '休憩（1回目）を開始しました。');
+        }
 
-        return redirect()->back()->with('success', '休憩開始しました。');
-    }
+        // 1回目の休憩がまだ終了していない場合は拒否
+        if ($attendance->break_start_time && !$attendance->break_end_time) {
+            return redirect()->back()->with('error', '休憩（1回目）が終了していません。');
+        }
+
+        // 2回目の休憩が未記録なら
+        if (!$attendance->break2_start_time) {
+            $attendance->break2_start_time = $now->format('H:i:s');
+            $attendance->save();
+            return redirect()->back()->with('success', '休憩（2回目）を開始しました。');
+        }
+
+        // 2回目の休憩がまだ終了していない場合は拒否
+        if ($attendance->break2_start_time && !$attendance->break2_end_time) {
+            return redirect()->back()->with('error', '休憩（2回目）が終了していません。');
+        }
+
+    return redirect()->back()->with('error', '休憩は2回までです。');
+}
 
     public function breakEnd()
     {
@@ -107,10 +175,21 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', '出勤記録がありません。');
         }
 
-        $attendance->break_end_time = $now->format('H:i:s'); // break_end_time カラムを追加している場合
-        $attendance->save();
+        // 1回目の休憩が進行中なら終了
+        if ($attendance->break_start_time && !$attendance->break_end_time) {
+            $attendance->break_end_time = $now->format('H:i:s');
+            $attendance->save();
+            return redirect()->back()->with('success', '休憩（1回目）を終了しました。');
+        }
 
-        return redirect()->back()->with('success', '休憩終了しました。');
+        // 2回目の休憩が進行中なら終了
+        if ($attendance->break2_start_time && !$attendance->break2_end_time) {
+            $attendance->break2_end_time = $now->format('H:i:s');
+            $attendance->save();
+            return redirect()->back()->with('success', '休憩（2回目）を終了しました。');
+        }
+
+        return redirect()->back()->with('error', '現在、進行中の休憩はありません。');
     }
 
     public function list(Request $request)
