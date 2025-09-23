@@ -65,6 +65,18 @@ class AttendanceController extends Controller
                 $workSeconds = max(0, $totalWorkSeconds - $totalBreakSeconds);
                 $workDuration = CarbonInterval::seconds($workSeconds);
             }
+
+            if ($attendance) {
+            // DBに保存されている total_minutes / break_minutes を CarbonInterval に変換
+            if ($attendance->total_minutes !== null) {
+                $workDuration = CarbonInterval::minutes($attendance->total_minutes);
+            }
+
+            if ($attendance->break_minutes !== null) {
+                $breakDuration = CarbonInterval::minutes($attendance->break_minutes);
+            }
+        }
+
         }
 
         return view('attendance.index', compact(
@@ -115,8 +127,37 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', '退勤できません。');
         }
 
+        // 終了時間を保存
         $attendance->end_time = $now->format('H:i:s');
-        // 労働時間計算などあればここで実装
+
+        // ===== 勤務時間・休憩時間の計算 =====
+        $startTime = $attendance->start_time ? Carbon::createFromFormat('H:i:s', $attendance->start_time) : null;
+        if (!$startTime) {
+            return redirect()->back()->with('error', '出勤時間が記録されていません。');
+        }
+
+        $breakStart1 = $attendance->break_start_time ? Carbon::createFromFormat('H:i:s', $attendance->break_start_time) : null;
+        $breakEnd1 = $attendance->break_end_time ? Carbon::createFromFormat('H:i:s', $attendance->break_end_time) : null;
+
+        $breakStart2 = $attendance->break2_start_time ? Carbon::createFromFormat('H:i:s', $attendance->break2_start_time) : null;
+        $breakEnd2 = $attendance->break2_end_time ? Carbon::createFromFormat('H:i:s', $attendance->break2_end_time) : null;
+
+        // 休憩時間（秒）
+        $totalBreakSeconds = 0;
+        if ($breakStart1 && $breakEnd1 && $breakEnd1->gt($breakStart1)) {
+            $totalBreakSeconds += $breakEnd1->diffInSeconds($breakStart1);
+        }
+        if ($breakStart2 && $breakEnd2 && $breakEnd2->gt($breakStart2)) {
+            $totalBreakSeconds += $breakEnd2->diffInSeconds($breakStart2);
+        }
+
+        // 勤務時間（秒）
+        $totalWorkSeconds = $now->diffInSeconds($startTime);
+        $workSeconds = max(0, $totalWorkSeconds - $totalBreakSeconds);
+
+        // 保存
+        $attendance->break_minutes = floor($totalBreakSeconds / 60);
+        $attendance->total_minutes = floor($workSeconds / 60);
         $attendance->save();
 
         return redirect()->back()->with('success', '退勤しました。');

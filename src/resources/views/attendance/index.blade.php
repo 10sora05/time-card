@@ -46,14 +46,12 @@
             @if ($isOutsideWorkHours)
                 <div class="note">勤務外</div>
             @endif
-
         @elseif ($attendance && !$endTime)
             @if ($isOnBreak)
                 <div class="note">休憩中</div>
             @else
                 <div class="note">出勤中</div>
             @endif
-
         @elseif ($attendance && $endTime)
             <div class="note">退勤済</div>
         @endif
@@ -63,13 +61,23 @@
         <p class="data_time">{{ $now->format('H:i') }}</p>
 
         {{-- 勤務時間と休憩時間の表示 --}}
-        @if ($workDuration)
-            <p class="data">勤務時間：{{ $workDuration->format('%H時間%i分') }}</p>
-        @endif
+        <p class="data">
+            勤務時間：
+            @if ($workDuration)
+                {{ $workDuration->format('%H時間%i分') }}
+            @else
+                データ未取得（または未退勤）
+            @endif
+        </p>
 
-        @if ($breakDuration)
-            <p class="data">休憩時間：{{ $breakDuration->format('%H時間%i分') }}</p>
-        @endif
+        <p class="data">
+            休憩時間：
+            @if ($breakDuration)
+                {{ $breakDuration->format('%H時間%i分') }}
+            @else
+                データ未取得（または休憩未登録）
+            @endif
+        </p>
 
         {{-- フラッシュメッセージ --}}
         @if(session('success'))
