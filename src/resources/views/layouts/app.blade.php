@@ -14,9 +14,8 @@
 <body>
   <header class="header">
     <div class="header__inner">
-      <div class="header-utilities">
-        <a class="header__logo" href="/attendance">
-          <img src="{{ asset('images/logo.svg') }}">
+        <a href="/attendance">
+          <img class="header__logo" src="{{ asset('images/logo.svg') }}">
         </a>
         <nav>
           <ul class="header-nav">
@@ -39,7 +38,6 @@
             @endif
           </ul>
         </nav>
-      </div>
     </div>
   </header>
 
