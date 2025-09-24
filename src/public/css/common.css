@@ -1,54 +1,80 @@
-.header {
-    background: #000;
-}
-
-.header__inner {
-    margin: 0 auto;
-    padding: 20px 15px;
-    max-width: 100%;
-}
-
-.header-utilities {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.header__logo {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 24px;
-}
-
-.header-utilities nav {
-    width: 34%;
-}
-
-.header-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.header-nav__item {
-    width: 20%;
-}
-
-.header-nav__link {
-    color: #fff;
-    text-decoration: none;
-}
-
-.header-nav__button {
-    border: none;
-    background: transparent;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-}
-
 .content {
     background-color: #f1f0f2;
     min-height: 100vh;
+}
+
+.header {
+    background: #000;
+    overflow-x: auto;
+}
+
+.header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    flex-wrap: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 共通のナビ設定 */
+.header-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    /* ← これが重要！paddingで横幅が増えてた */
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+/* タブレット向け：gap だけ調整 */
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .header__inner {
+        padding: 12px 12px;
+        /* やや狭めでもOK */
+    }
+
+    .header-nav {
+        gap: 12px;
+    }
+}
+
+/* PC向け：gap広げるだけでOK */
+@media screen and (min-width: 851px) {
+    .header-nav {
+        gap: 52px;
+    }
+}
+
+/* ナビ項目 */
+.header-nav__item {
+    flex-shrink: 0;
+}
+
+/* ナビリンクやボタン */
+.header-nav__link,
+.header-nav__button {
+    font-size: 16px;
+    text-decoration: none;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* タブレット向け調整 */
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .header__inner {
+        padding: 12px 12px;
+    }
+
+    .header-nav {
+        gap: 12px;
+        padding: 8px;
+    }
 }
