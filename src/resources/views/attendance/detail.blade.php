@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends(auth('admin')->check() ? 'layouts.admin_app' : 'layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
@@ -9,11 +9,14 @@
     <div class="container">
         <h2>勤怠詳細</h2>
 
-        <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
-            @csrf
-            @method('PUT')
-
-            <div class="detail-table">
+        <form method="POST" action="
+        @if(auth('admin')->check())
+            {{ route('admin.attendances.update', $attendance->id) }}
+        @else
+            {{ route('attendance.update', $attendance->id) }}
+        @endif
+        ">
+                <div class="detail-table">
                 <table class="detail-table__inner">
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>名前</label></th>
@@ -43,18 +46,22 @@
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>休憩</label></th>
                         <td class="detail-table__td">
-                            <input type="time" name="break_start_time" value="{{ old('break_start_time', $attendance->break_start_time) }}">
+                            <input type="time" name="break_start_time" 
+                                value="{{ old('break_start_time', $attendance->break_start_time ? \Carbon\Carbon::parse($attendance->break_start_time)->format('H:i') : '') }}">
                             ～
-                            <input type="time" name="break_end_time" value="{{ old('break_end_time', $attendance->break_end_time) }}">
+                            <input type="time" name="break_end_time" 
+                                value="{{ old('break_end_time', $attendance->break_end_time ? \Carbon\Carbon::parse($attendance->break_end_time)->format('H:i') : '') }}">
                         </td>
                     </tr>
 
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>休憩2</label></th>
                         <td class="detail-table__td">
-                            <input type="time" name="break2_start_time" value="{{ old('break2_start_time', $attendance->break2_start_time) }}">
+                            <input type="time" name="break2_start_time" 
+                                value="{{ old('break2_start_time', $attendance->break2_start_time ? \Carbon\Carbon::parse($attendance->break2_start_time)->format('H:i') : '') }}">
                             ～
-                            <input type="time" name="break2_end_time" value="{{ old('break2_end_time', $attendance->break2_end_time) }}">
+                            <input type="time" name="break2_end_time" 
+                                value="{{ old('break2_end_time', $attendance->break2_end_time ? \Carbon\Carbon::parse($attendance->break2_end_time)->format('H:i') : '') }}">
                         </td>
                     </tr>
 
@@ -67,9 +74,31 @@
                 </table>
             </div>
             <div class="detail-btn">
-                <button type="submit" class="custom-button">修正</button>
+                @if (!$isPending)
+                    <button type="submit" class="custom-button">修正</button>
+                @endif
             </div>
+
+            @if ($isPending)
+                <p class="comment">※ 承認待ちのため修正はできません。</p>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const inputs = document.querySelectorAll('input, textarea');
+                        inputs.forEach(el => el.disabled = true);
+                    });
+                </script>
+            @endif
         </form>
     </div>
+    @if ($errors->any())
+    <div style="color: red;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 </div>
 @endsection

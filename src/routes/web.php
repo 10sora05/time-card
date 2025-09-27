@@ -4,26 +4,31 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\Auth\UserLoginController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\User\Auth\UserRegisterController;
-use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
+use App\Http\Controllers\User\AttendanceController;
 
 // 一般ユーザー用ログイン・ログアウト
 Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserLoginController::class, 'login']);
 Route::post('/logout', [UserLoginController::class, 'logout'])->name('logout');
 
-// 管理者用ルート
+// ユーザー登録
+Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
+Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
+
+// 管理者ログイン処理（変更なし）
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
     Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 });
 
-// ユーザー登録
-Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
-Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
+// 管理者用勤怠一覧（adminガード + isAdmin権限チェックなども入れると良い）
+Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+    Route::get('/attendances', [AdminAttendanceController::class, 'index'])->name('admin.attendances');
+});
 
-// 一般ユーザー用勤怠ルート（すべてまとめて定義）
+// 一般ユーザー用勤怠ルート
 Route::middleware('auth:web')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
 
@@ -35,4 +40,20 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
     Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
     Route::put('/attendance/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
+});
+
+// 管理者用ルート
+Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+    Route::get('attendances/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendances.show');
+    Route::post('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendances.update');
+});
+
+// 一般ユーザー用 勤怠修正申請
+Route::middleware('auth:web')->group(function () {
+    Route::post('/attendance/{id}/correction', [AttendanceCorrectionController::class, 'store'])->name('user.attendance.correction.store');
+});
+
+// 管理者用 勤怠修正申請
+Route::prefix('admin')->middleware('auth:admin')->group(function () {
+    Route::post('/attendance/{id}/correction', [AttendanceCorrectionController::class, 'store'])->name('admin.attendance.correction.store');
 });

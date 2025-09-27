@@ -8,6 +8,9 @@ use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use App\Models\AttendanceCorrection;
+use App\Http\Requests\UpdateAttendanceRequest;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -278,22 +281,48 @@ class AttendanceController extends Controller
     public function edit($id)
     {
         $attendance = Attendance::findOrFail($id);
-        return view('attendance.detail', compact('attendance'));
+
+        // 承認待ち申請があるかチェック
+        $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        return view('attendance.detail', compact('attendance', 'isPending'));
+    }
+         
+    public function show($id)
+    {
+        // 承認待ちが存在するかチェック
+    $attendance = Attendance::findOrFail($id);
+
+    $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
+        ->where('status', 'pending')
+        ->exists();
+
+        $user = Auth::user();
+
+        $layout = $user->is_admin ? 'layouts.admin_app' : 'layouts.app';
+
+        return view('attendance.detail', compact('attendance', 'isPending', 'layout'));
     }
 
     public function update(UpdateAttendanceRequest $request, $id)
     {
-        $attendance = Attendance::findOrFail($id);
+        Log::info('update method called for attendance id: ' . $id);
 
-        $attendance->update($request->validated());
+        AttendanceCorrection::create([
+            'attendance_id'    => $id,
+            'start_time'       => $request->start_time,
+            'end_time'         => $request->end_time,
+            'break_start_time' => $request->break_start_time,
+            'break_end_time'   => $request->break_end_time,
+            'break2_start_time'=> $request->break2_start_time,
+            'break2_end_time'  => $request->break2_end_time,
+            'note'             => $request->note,
+            'status'           => 'pending',
+        ]);
 
-        return redirect()->route('attendance.show', $id)->with('success', '勤怠情報を更新しました。');
-    }
-    
-    public function show($id)
-    {
-        $attendance = Attendance::findOrFail($id);
-        return view('attendance.detail', compact('attendance'));
+        return redirect()->back()->with('success', '修正申請を送信しました。');
     }
 
 }

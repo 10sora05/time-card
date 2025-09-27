@@ -46,7 +46,7 @@
                         @if (!empty($day['attendance']) && $day['attendance']->start_time)
                             {{ \Carbon\Carbon::createFromFormat('H:i:s', $day['attendance']->start_time)->format('H:i') }}
                         @else
-                            -
+                            　
                         @endif
                     </td>
 
@@ -54,7 +54,7 @@
                         @if (!empty($day['attendance']) && $day['attendance']->end_time)
                             {{ \Carbon\Carbon::createFromFormat('H:i:s', $day['attendance']->end_time)->format('H:i') }}
                         @else
-                            -
+                            　
                         @endif
                     </td>
 
@@ -66,7 +66,7 @@
                             @endphp
                             {{ $breakHours }}:{{ $breakMinutes }}
                         @else
-                            -
+                            　
                         @endif
                     </td>
 
@@ -78,7 +78,7 @@
                             @endphp
                             {{ $totalHours }}:{{ $totalMinutes }}
                         @else
-                            -
+                            　
                         @endif
                     </td>
 
@@ -86,7 +86,7 @@
                         @if (!empty($day['attendance']))
                             <a href="{{ route('attendance.show', $day['attendance']->id) }}" class="detail-a">詳細</a>
                         @else
-                            -
+                            　
                         @endif
                     </td>
                 </tr>

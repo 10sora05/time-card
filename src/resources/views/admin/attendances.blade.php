@@ -42,12 +42,14 @@
         </tr>
         @foreach ($attendances as $attendance)
         <tr class="attendance-table__row">
-            <td class="attendance-table__td">{{ $attendance->employee_name }}</td>
-            <td class="attendance-table__td">{{ $attendance->start_time }}</td>
-            <td class="attendance-table__td">{{ $attendance->end_time }}</td>
-            <td class="attendance-table__td">{{ $attendance->break_minutes }}分</td>
-            <td class="attendance-table__td">{{ $attendance->formatted_total_time ?? '未計算' }}</td>
-            <td class="attendance-table__td"><a href="#" class="detail">詳細</a></td>
+          <td class="attendance-table__td">{{ $attendance->employee_name }}</td>
+          <td class="attendance-table__td">{{ $attendance->start_time }}</td>
+          <td class="attendance-table__td">{{ $attendance->end_time }}</td>
+          <td class="attendance-table__td">{{ $attendance->break_minutes }}分</td>
+          <td class="attendance-table__td">{{ $attendance->formatted_total_time ?? '未計算' }}</td>
+          <td class="attendance-table__td">
+            <a href="{{ route('admin.attendances.show', ['id' => $attendance->id]) }}" class="detail">詳細</a>
+          </td>
         </tr>
         @endforeach
       </table>

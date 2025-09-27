@@ -45,3 +45,16 @@
 .custom-button:hover {
     background-color: #737373;
 }
+
+input,
+textarea,
+button {
+    pointer-events: none;
+    background-color: #f8f8f8;
+}
+
+.comment {
+    color: red;
+    font-weight: bold;
+    text-align: right;
+}
