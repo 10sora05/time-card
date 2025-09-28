@@ -91,12 +91,6 @@
                     <button type="submit" class="custom-button">修正</button>
                 @else
                     <p class="comment">※ 承認待ちのため修正はできません。</p>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const inputs = document.querySelectorAll('input, textarea');
-                            inputs.forEach(el => el.disabled = true);
-                        });
-                    </script>
                 @endif
             </div>
         </form>

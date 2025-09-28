@@ -6,28 +6,30 @@ use Illuminate\Http\Request;
 use App\Models\AttendanceCorrection;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\AttendanceCorrectionRequest;
 
 class AttendanceCorrectionController extends Controller
 {
-    public function store(UpdateAttendanceRequest $request, $attendanceId)
+    public function store(AttendanceCorrectionRequest $request, $attendanceId)
     {
-        Log::info('store method called for attendance id: ' . $attendanceId);
-        // 必要なら追加ログ
-        // Log::info('request data: ', $request->all());
+        try {
+            AttendanceCorrection::create([
+                'attendance_id' => $attendanceId,
+                'user_id' => auth()->id(),
+                'start_time' => $request->input('start_time'),
+                'end_time' => $request->input('end_time'),
+                'break_start_time' => $request->input('break_start_time'),
+                'break_end_time' => $request->input('break_end_time'),
+                'break2_start_time' => $request->input('break2_start_time'),
+                'break2_end_time' => $request->input('break2_end_time'),
+                'note' => $request->input('note'),
+                'status' => 'pending',
+            ]);
 
-        AttendanceCorrection::create([
-            'attendance_id' => $attendanceId,
-            'user_id' => auth()->id(),
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'break_start_time' => $request->break_start_time,
-            'break_end_time' => $request->break_end_time,
-            'break2_start_time' => $request->break2_start_time,
-            'break2_end_time' => $request->break2_end_time,
-            'note' => $request->note,
-            'status' => 'pending',
-        ]);
-
-        return redirect()->back()->with('success', '修正申請を送信しました。');
+            return redirect()->back()->with('success', '修正申請を送信しました。');
+        } catch (\Exception $e) {
+            Log::error('勤怠修正申請の保存に失敗: ' . $e->getMessage());
+            return redirect()->back()->with('error', '修正申請の送信に失敗しました。もう一度お試しください。');
+        }
     }
 }
