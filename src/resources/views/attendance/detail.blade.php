@@ -32,19 +32,21 @@
 
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>日付</label></th>
-                        <td class="detail-table__td">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</td>
-                    </tr>
+                            <td class="detail-table__td">
+                                <span>　{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年') }}</span><span class="detail-deta">　{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
+                            </td>
+                        </tr>
 
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>出勤・退勤</label></th>
                         <td class="detail-table__td">
-                            <input type="time" name="start_time"
+                            <input type="time" class="detail-input__left" name="start_time"
                                 step="60"
                                 value="{{ old('start_time', \Carbon\Carbon::parse($attendance->start_time)->format('H:i')) }}"
                                 required
                                 @unless($canEdit) disabled @endunless>
                             ～
-                            <input type="time" name="end_time"
+                            <input type="time" class="detail-input__right" name="end_time"
                                 step="60"
                                 value="{{ old('end_time', \Carbon\Carbon::parse($attendance->end_time)->format('H:i')) }}"
                                 required
@@ -55,11 +57,11 @@
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>休憩</label></th>
                         <td class="detail-table__td">
-                            <input type="time" name="break_start_time" 
+                            <input type="time" class="detail-input__left" name="break_start_time" 
                                 value="{{ old('break_start_time', $attendance->break_start_time ? \Carbon\Carbon::parse($attendance->break_start_time)->format('H:i') : '') }}"
                                 @unless($canEdit) disabled @endunless>
                             ～
-                            <input type="time" name="break_end_time" 
+                            <input type="time" class="detail-input__right" name="break_end_time" 
                                 value="{{ old('break_end_time', $attendance->break_end_time ? \Carbon\Carbon::parse($attendance->break_end_time)->format('H:i') : '') }}"
                                 @unless($canEdit) disabled @endunless>
                         </td>
@@ -68,11 +70,11 @@
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>休憩2</label></th>
                         <td class="detail-table__td">
-                            <input type="time" name="break2_start_time" 
+                            <input type="time" class="detail-input__left" name="break2_start_time" 
                                 value="{{ old('break2_start_time', $attendance->break2_start_time ? \Carbon\Carbon::parse($attendance->break2_start_time)->format('H:i') : '') }}"
                                 @unless($canEdit) disabled @endunless>
                             ～
-                            <input type="time" name="break2_end_time" 
+                            <input type="time" class="detail-input__right" name="break2_end_time" 
                                 value="{{ old('break2_end_time', $attendance->break2_end_time ? \Carbon\Carbon::parse($attendance->break2_end_time)->format('H:i') : '') }}"
                                 @unless($canEdit) disabled @endunless>
                         </td>
@@ -81,7 +83,7 @@
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>備考</label></th>
                         <td class="detail-table__td">
-                            <textarea name="note" rows="3" style="width: 100%;" @unless($canEdit) disabled @endunless>{{ old('note', $attendance->note) }}</textarea>
+                            <textarea name="note" rows="3" class="note-textarea" @unless($canEdit) disabled @endunless>{{ old('note', $attendance->note) }}</textarea>
                         </td>
                     </tr>
                 </table>
@@ -105,6 +107,4 @@
     </div>
 @endif
 </div>
-<p>canEdit: {{ $canEdit ? 'true' : 'false' }}</p>
-
 @endsection

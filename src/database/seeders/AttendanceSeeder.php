@@ -15,7 +15,7 @@ class AttendanceSeeder extends Seeder
         for ($i = 1; $i <= 5; $i++) {
             foreach ($employees as $employee) {
                 Attendance::create([
-                    'employee_name' => "{$employee}{$i}",
+                    'employee_name' => "{$employee}",
                     'start_time' => '09:00:00',
                     'end_time' => '18:00:00',
                     'break_start_time' => '12:00:00',

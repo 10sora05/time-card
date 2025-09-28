@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\User\Auth\UserRegisterController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
 use App\Http\Controllers\User\AttendanceController;
+use App\Http\Controllers\Admin\AdminAttendanceCorrectionController;
+use App\Http\Controllers\User\AttendanceCorrectionController;
+
 
 // 一般ユーザー用ログイン・ログアウト
 Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
@@ -46,7 +49,7 @@ Route::middleware('auth:web')->group(function () {
 Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::get('attendances', [AdminAttendanceController::class, 'index'])->name('admin.attendances');
     Route::get('attendances/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendances.show');
-    Route::post('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update'); // ← これ！
+    Route::put('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
 });
 
 // 一般ユーザー用 勤怠修正申請
@@ -54,7 +57,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/attendance/{id}/correction', [AttendanceCorrectionController::class, 'store'])->name('user.attendance.correction.store');
 });
 
-// 管理者用 勤怠修正申請
-Route::prefix('admin')->middleware('auth:admin')->group(function () {
-    Route::post('/attendance/{id}/correction', [AttendanceCorrectionController::class, 'store'])->name('admin.attendance.correction.store');
+// 管理者用: 修正申請の承認・拒否
+Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+    Route::put('/attendance_correction/{id}', [AdminAttendanceCorrectionController::class, 'update'])->name('admin.attendance_correction.update');
 });

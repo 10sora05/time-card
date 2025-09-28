@@ -10,26 +10,31 @@ use App\Http\Requests\AttendanceCorrectionRequest;
 
 class AttendanceCorrectionController extends Controller
 {
-    public function store(AttendanceCorrectionRequest $request, $attendanceId)
+    public function store(Request $request, $attendanceId)
     {
-        try {
-            AttendanceCorrection::create([
-                'attendance_id' => $attendanceId,
-                'user_id' => auth()->id(),
-                'start_time' => $request->input('start_time'),
-                'end_time' => $request->input('end_time'),
-                'break_start_time' => $request->input('break_start_time'),
-                'break_end_time' => $request->input('break_end_time'),
-                'break2_start_time' => $request->input('break2_start_time'),
-                'break2_end_time' => $request->input('break2_end_time'),
-                'note' => $request->input('note'),
-                'status' => 'pending',
-            ]);
+        $attendance = Attendance::findOrFail($attendanceId);
 
-            return redirect()->back()->with('success', '修正申請を送信しました。');
-        } catch (\Exception $e) {
-            Log::error('勤怠修正申請の保存に失敗: ' . $e->getMessage());
-            return redirect()->back()->with('error', '修正申請の送信に失敗しました。もう一度お試しください。');
+        // すでに申請中の場合、エラー返す（任意）
+        if ($attendance->is_pending) {
+            return back()->withErrors(['申請中のため修正できません。']);
         }
+
+        AttendanceCorrection::create([
+            'attendance_id' => $attendanceId,
+            'user_id' => auth()->id(),
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'break_start_time' => $request->break_start_time,
+            'break_end_time' => $request->break_end_time,
+            'break2_start_time' => $request->break2_start_time,
+            'break2_end_time' => $request->break2_end_time,
+            'note' => $request->note,
+            'status' => 'pending',
+        ]);
+
+        // 勤怠データに申請中フラグを立てる（必要に応じて）
+        $attendance->update(['is_pending' => true]);
+
+        return redirect()->back()->with('message', '修正申請を送信しました。');
     }
 }

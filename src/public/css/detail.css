@@ -18,11 +18,13 @@
 }
 
 .detail-table__th {
+    width: 40%;
     padding: 20px 0;
     color: #737373;
 }
 
 .detail-table__td {
+    width: 65%;
     padding: 20px 0;
 }
 
@@ -46,15 +48,28 @@
     background-color: #737373;
 }
 
-input,
-textarea,
-button {
-    pointer-events: none;
-    background-color: #f8f8f8;
-}
-
 .comment {
     color: red;
     font-weight: bold;
     text-align: right;
+}
+
+.note-textarea {
+    width: 52%;
+}
+
+.detail-input__left {
+    margin-right: 10%;
+    padding: 0 1%;
+    font-size: 16px;
+}
+
+.detail-input__right {
+    margin-left: 10%;
+    padding: 0 1%;
+    font-size: 16px;
+}
+
+.detail-deta {
+    margin-left: 27%;
 }

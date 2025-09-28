@@ -42,6 +42,7 @@ class AdminAttendanceController extends Controller
 
     public function show($id)
     {
+        // ここで最新の情報を取得することが重要
         $attendance = Attendance::findOrFail($id);
 
         $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
@@ -55,21 +56,23 @@ class AdminAttendanceController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateAttendanceRequest $request, $id)
     {
+        // リクエストがバリデーションを通過しているときのみ処理を進める
         $attendance = Attendance::findOrFail($id);
 
+        // 管理者が勤怠情報を更新処理
         $attendance->update([
-            'start_time' => $request->input('start_time'),
-            'end_time' => $request->input('end_time'),
-            'break_start_time' => $request->input('break_start_time'),
-            'break_end_time' => $request->input('break_end_time'),
-            'break2_start_time' => $request->input('break2_start_time'),
-            'break2_end_time' => $request->input('break2_end_time'),
-            'note' => $request->input('note'),
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'break_start_time' => $request->break_start_time,
+            'break_end_time' => $request->break_end_time,
+            'break2_start_time' => $request->break2_start_time,
+            'break2_end_time' => $request->break2_end_time,
+            'note' => $request->note,
         ]);
 
-        return redirect()->back()->with('success', '勤怠情報を更新しました。');
+        return redirect()->route('admin.attendances.show', $attendance->id)
+                        ->with('success', '勤怠情報が更新されました');
     }
-
 }

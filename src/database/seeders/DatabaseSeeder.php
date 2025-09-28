@@ -17,6 +17,13 @@ class DatabaseSeeder extends Seeder
             AttendanceSeeder::class,
         ]);
 
-        $this->call(AdminSeeder::class);
+        $this->call([
+            AdminSeeder::class,
+        ]);
+
+        $this->call([
+        UserSeeder::class,
+        ]);
+    
     }
 }
