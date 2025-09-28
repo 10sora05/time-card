@@ -44,8 +44,9 @@ Route::middleware('auth:web')->group(function () {
 
 // 管理者用ルート
 Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+    Route::get('attendances', [AdminAttendanceController::class, 'index'])->name('admin.attendances');
     Route::get('attendances/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendances.show');
-    Route::post('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendances.update');
+    Route::post('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update'); // ← これ！
 });
 
 // 一般ユーザー用 勤怠修正申請

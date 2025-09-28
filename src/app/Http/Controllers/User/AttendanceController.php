@@ -284,45 +284,54 @@ class AttendanceController extends Controller
 
         // 承認待ち申請があるかチェック
         $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
-            ->where('status', 'pending')
-            ->exists();
+                    ->where('status', 'pending')
+                    ->exists();
 
         return view('attendance.detail', compact('attendance', 'isPending'));
     }
          
     public function show($id)
     {
-        // 承認待ちが存在するかチェック
-    $attendance = Attendance::findOrFail($id);
+        $attendance = Attendance::findOrFail($id);
 
-    $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
-        ->where('status', 'pending')
-        ->exists();
+        $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
+            ->where('status', 'pending')
+            ->exists();
 
-        $user = Auth::user();
-
-        $layout = $user->is_admin ? 'layouts.admin_app' : 'layouts.app';
-
-        return view('attendance.detail', compact('attendance', 'isPending', 'layout'));
+        return view('attendance.detail', [
+            'attendance' => $attendance,
+            'isPending' => $isPending,
+            'layout' => 'layouts.app',
+        ]);
     }
 
-    public function update(UpdateAttendanceRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        Log::info('update method called for attendance id: ' . $id);
+        $attendance = Attendance::findOrFail($id);
 
+        // 修正がすでに申請中なら弾く
+        $exists = AttendanceCorrection::where('attendance_id', $attendance->id)
+                    ->where('status', 'pending')
+                    ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withErrors(['すでに修正申請が存在します。承認をお待ちください。']);
+        }
+
+        // 申請データの保存
         AttendanceCorrection::create([
-            'attendance_id'    => $id,
-            'start_time'       => $request->start_time,
-            'end_time'         => $request->end_time,
-            'break_start_time' => $request->break_start_time,
-            'break_end_time'   => $request->break_end_time,
-            'break2_start_time'=> $request->break2_start_time,
-            'break2_end_time'  => $request->break2_end_time,
-            'note'             => $request->note,
-            'status'           => 'pending',
+            'attendance_id' => $attendance->id,
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+            'break_start_time' => $request->input('break_start_time'),
+            'break_end_time' => $request->input('break_end_time'),
+            'break2_start_time' => $request->input('break2_start_time'),
+            'break2_end_time' => $request->input('break2_end_time'),
+            'note' => $request->input('note'),
+            'status' => 'pending',
         ]);
 
-        return redirect()->back()->with('success', '修正申請を送信しました。');
+        return redirect()->back()->with('success', '修正申請を送信しました。承認をお待ちください。');
     }
 
 }

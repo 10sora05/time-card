@@ -48,42 +48,28 @@ class AdminAttendanceController extends Controller
             ->where('status', 'pending')
             ->exists();
 
-        $layout = 'layouts.admin_app';
-
-        // 管理者は常に管理者用のルートへ
-        $formAction = route('admin.attendance.update', $attendance->id);
-
-        return view('attendance.detail', compact('attendance', 'isPending', 'layout', 'formAction'));
+        return view('attendance.detail', [
+            'attendance' => $attendance,
+            'isPending' => $isPending,
+            'layout' => 'layouts.admin_app',
+        ]);
     }
 
-    public function update(UpdateAttendanceRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
 
-        $input = $request->all();
-
-        $removeSeconds = fn($time) => $time ? substr($time, 0, 5) : null;
-
-        $input['break_start_time'] = $removeSeconds($input['break_start_time']);
-        $input['break_end_time'] = $removeSeconds($input['break_end_time']);
-        $input['break2_start_time'] = $removeSeconds($input['break2_start_time']);
-        $input['break2_end_time'] = $removeSeconds($input['break2_end_time']);
-
-        $attendance->update($input);
-
-        AttendanceCorrection::create([
-            'attendance_id' => $id,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'break_start_time' => $request->break_start_time,
-            'break_end_time' => $request->break_end_time,
-            'break2_start_time' => $request->break2_start_time,
-            'break2_end_time' => $request->break2_end_time,
-            'note' => $request->note,
-            'status' => 'approved', // 管理者は即承認でも良い
+        $attendance->update([
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+            'break_start_time' => $request->input('break_start_time'),
+            'break_end_time' => $request->input('break_end_time'),
+            'break2_start_time' => $request->input('break2_start_time'),
+            'break2_end_time' => $request->input('break2_end_time'),
+            'note' => $request->input('note'),
         ]);
 
-        return redirect()->back()->with('success', '勤怠を修正しました。');
+        return redirect()->back()->with('success', '勤怠情報を更新しました。');
     }
 
 }

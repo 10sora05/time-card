@@ -1,4 +1,8 @@
-@extends(auth('admin')->check() ? 'layouts.admin_app' : 'layouts.app')
+@extends($layout)
+
+@php
+    $canEdit = auth('admin')->check() || (!$isPending && auth()->check());
+@endphp
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
@@ -9,13 +13,16 @@
     <div class="container">
         <h2>勤怠詳細</h2>
 
-        <form method="POST" action="
-        @if(auth('admin')->check())
-            {{ route('admin.attendances.update', $attendance->id) }}
+        <form method="POST" action="@auth('admin')
+            {{ route('admin.attendance.update', $attendance->id) }}
         @else
-            {{ route('attendance.update', $attendance->id) }}
-        @endif
-        ">
+            {{ route('user.attendance.correction.store', $attendance->id) }}
+        @endauth">
+            @csrf
+
+            @auth('admin')
+                @method('PUT')
+            @endauth
                 <div class="detail-table">
                 <table class="detail-table__inner">
                     <tr class="detail-table__row">
@@ -34,12 +41,14 @@
                             <input type="time" name="start_time"
                                 step="60"
                                 value="{{ old('start_time', \Carbon\Carbon::parse($attendance->start_time)->format('H:i')) }}"
-                                required>
+                                required
+                                @unless($canEdit) disabled @endunless>
                             ～
                             <input type="time" name="end_time"
                                 step="60"
                                 value="{{ old('end_time', \Carbon\Carbon::parse($attendance->end_time)->format('H:i')) }}"
-                                required>
+                                required
+                                @unless($canEdit) disabled @endunless>
                         </td>
                     </tr>
 
@@ -47,10 +56,12 @@
                         <th class="detail-table__th"><label>休憩</label></th>
                         <td class="detail-table__td">
                             <input type="time" name="break_start_time" 
-                                value="{{ old('break_start_time', $attendance->break_start_time ? \Carbon\Carbon::parse($attendance->break_start_time)->format('H:i') : '') }}">
+                                value="{{ old('break_start_time', $attendance->break_start_time ? \Carbon\Carbon::parse($attendance->break_start_time)->format('H:i') : '') }}"
+                                @unless($canEdit) disabled @endunless>
                             ～
                             <input type="time" name="break_end_time" 
-                                value="{{ old('break_end_time', $attendance->break_end_time ? \Carbon\Carbon::parse($attendance->break_end_time)->format('H:i') : '') }}">
+                                value="{{ old('break_end_time', $attendance->break_end_time ? \Carbon\Carbon::parse($attendance->break_end_time)->format('H:i') : '') }}"
+                                @unless($canEdit) disabled @endunless>
                         </td>
                     </tr>
 
@@ -58,37 +69,36 @@
                         <th class="detail-table__th"><label>休憩2</label></th>
                         <td class="detail-table__td">
                             <input type="time" name="break2_start_time" 
-                                value="{{ old('break2_start_time', $attendance->break2_start_time ? \Carbon\Carbon::parse($attendance->break2_start_time)->format('H:i') : '') }}">
+                                value="{{ old('break2_start_time', $attendance->break2_start_time ? \Carbon\Carbon::parse($attendance->break2_start_time)->format('H:i') : '') }}"
+                                @unless($canEdit) disabled @endunless>
                             ～
                             <input type="time" name="break2_end_time" 
-                                value="{{ old('break2_end_time', $attendance->break2_end_time ? \Carbon\Carbon::parse($attendance->break2_end_time)->format('H:i') : '') }}">
+                                value="{{ old('break2_end_time', $attendance->break2_end_time ? \Carbon\Carbon::parse($attendance->break2_end_time)->format('H:i') : '') }}"
+                                @unless($canEdit) disabled @endunless>
                         </td>
                     </tr>
 
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>備考</label></th>
                         <td class="detail-table__td">
-                            <textarea name="note" rows="3" style="width: 100%;">{{ old('note', $attendance->note) }}</textarea>
+                            <textarea name="note" rows="3" style="width: 100%;" @unless($canEdit) disabled @endunless>{{ old('note', $attendance->note) }}</textarea>
                         </td>
                     </tr>
                 </table>
             </div>
             <div class="detail-btn">
-                @if (!$isPending)
+                @if ($canEdit)
                     <button type="submit" class="custom-button">修正</button>
+                @else
+                    <p class="comment">※ 承認待ちのため修正はできません。</p>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const inputs = document.querySelectorAll('input, textarea');
+                            inputs.forEach(el => el.disabled = true);
+                        });
+                    </script>
                 @endif
             </div>
-
-            @if ($isPending)
-                <p class="comment">※ 承認待ちのため修正はできません。</p>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const inputs = document.querySelectorAll('input, textarea');
-                        inputs.forEach(el => el.disabled = true);
-                    });
-                </script>
-            @endif
         </form>
     </div>
     @if ($errors->any())
@@ -101,4 +111,6 @@
     </div>
 @endif
 </div>
+<p>canEdit: {{ $canEdit ? 'true' : 'false' }}</p>
+
 @endsection
