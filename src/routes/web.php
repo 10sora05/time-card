@@ -61,3 +61,14 @@ Route::middleware('auth:web')->group(function () {
 Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::put('/attendance_correction/{id}', [AdminAttendanceCorrectionController::class, 'update'])->name('admin.attendance_correction.update');
 });
+
+Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
+    Route::get('requests', [AdminAttendanceCorrectionController::class, 'index'])->name('attendance_corrections.index');
+    Route::get('requests/{id}', [AdminAttendanceCorrectionController::class, 'show'])->name('attendance_corrections.show');
+    Route::put('requests/{id}', [AdminAttendanceCorrectionController::class, 'update'])->name('attendance_corrections.update');
+});
+
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/stamp_correction_request/list', [AttendanceCorrectionController::class, 'list'])->name('user.attendance_corrections.list');
+    Route::get('/stamp_correction_request/{id}', [AttendanceCorrectionController::class, 'show'])->name('user.attendance_corrections.show');
+});

@@ -7,7 +7,7 @@
 @section('content')
 <div class="content">
     <div class="list__content">
-        <h2 class="attendance-list__title">勤怠一覧</h2>
+        <h2 class="list__title">勤怠一覧</h2>
         <div class="month-nav">
             <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="page-turn">← 前月</a>
 
@@ -40,7 +40,7 @@
                 @foreach ($days as $day)
                 <tr class="list-table__row">
 
-                <td class="list-table__td">{{ $day['formatted'] }}（{{ $day['weekday'] }}）</td>
+                    <td class="list-table__td">{{ $day['formatted'] }}（{{ $day['weekday'] }}）</td>
 
                     <td class="list-table__td">
                         @if (!empty($day['attendance']) && $day['attendance']->start_time)

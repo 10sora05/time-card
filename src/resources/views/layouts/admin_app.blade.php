@@ -24,10 +24,10 @@
               <a class="header-nav__link" href="/admin/attendances">勤怠一覧</a>
             </li>
             <li class="header-nav__item">
-              <a class="header-nav__link" href="/mypage">スタッフ一覧</a>
+              <a class="header-nav__link" href="/admin/mypage">スタッフ一覧</a>
             </li>
             <li class="header-nav__item">
-              <a class="header-nav__link" href="/mypage">申請一覧</a>
+              <a class="header-nav__link" href="/admin/requests">申請一覧</a>
             </li>
             <li class="header-nav__item">
               <form class="form" action="/logout" method="post">

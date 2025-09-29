@@ -321,6 +321,7 @@ class AttendanceController extends Controller
         // 申請データの保存
         AttendanceCorrection::create([
             'attendance_id' => $attendance->id,
+            'user_id' => auth('web')->id(),
             'start_time' => $request->input('start_time'),
             'end_time' => $request->input('end_time'),
             'break_start_time' => $request->input('break_start_time'),

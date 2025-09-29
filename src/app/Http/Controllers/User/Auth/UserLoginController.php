@@ -17,12 +17,17 @@ class UserLoginController extends Controller
     // ✅ ログイン処理
     public function login(Request $request)
     {
+        // ✅ 1. 他の guard をログアウト（admin → logout）
+        auth('admin')->logout();
+
+        // ✅ 2. バリデーション
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (auth()->guard('web')->attempt($credentials)) {
+        // ✅ 3. web guard でログイン
+        if (auth('web')->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect('/attendance');
         }

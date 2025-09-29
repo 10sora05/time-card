@@ -13,17 +13,20 @@
     <div class="container">
         <h2>勤怠詳細</h2>
 
-        <form method="POST" action="@auth('admin')
-            {{ route('admin.attendance.update', $attendance->id) }}
-        @else
-            {{ route('user.attendance.correction.store', $attendance->id) }}
-        @endauth">
-            @csrf
+        @php
+            $isAdmin = auth('admin')->check();
+            $isUser = auth('web')->check();
+            $canEdit = $isAdmin || (!$isPending && $isUser);
+        @endphp
 
-            @auth('admin')
+        <form method="POST" action="{{ $isAdmin
+            ? route('admin.attendance.update', $attendance->id)
+            : route('user.attendance.correction.store', $attendance->id) }}">
+            @csrf
+            @if($isAdmin)
                 @method('PUT')
-            @endauth
-                <div class="detail-table">
+            @endif
+                        <div class="detail-table">
                 <table class="detail-table__inner">
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>名前</label></th>
