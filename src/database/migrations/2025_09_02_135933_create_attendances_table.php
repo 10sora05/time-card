@@ -11,6 +11,9 @@ class CreateattendancesTable extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             // 名前
             $table->string('employee_name');
 

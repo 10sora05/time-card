@@ -59,13 +59,4 @@ class AttendanceCorrectionController extends Controller
         return view('stamp_correction_request.list', compact('corrections', 'status'));
     }
 
-    public function show($id)
-    {
-        $correction = AttendanceCorrection::with('attendance')
-            ->where('id', $id)
-            ->where('user_id', Auth::id()) // セキュリティ: 他人のデータは弾く
-            ->firstOrFail();
-
-        return view('attendance.request_detail', compact('correction'));
-    }
 }

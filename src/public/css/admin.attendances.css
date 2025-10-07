@@ -17,6 +17,7 @@
 .detail {
     color: #000;
     text-decoration: none;
+    font-weight: bold;
 }
 
 .attendance__date {

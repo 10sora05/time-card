@@ -22,6 +22,7 @@ class AttendanceCorrectionRequest extends FormRequest
             'break2_start_time' => ['nullable', 'date_format:H:i'],
             'break2_end_time' => ['nullable', 'date_format:H:i', 'after:break2_start_time'],
             'note' => ['nullable', 'string', 'max:500'],
+            'status' => 'in:pending,approved,rejected',
         ];
     }
 

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Models\Attendance;
 use Carbon\Carbon;
+use App\Models\Attendance;
+use App\Models\User;
 use App\Models\AttendanceCorrection;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +21,9 @@ class AdminAttendanceController extends Controller
 
     protected $redirectTo = '/admin/attendances';
 
-
+    // 全ユーザーの勤怠一覧（日付単位）
     public function index(Request $request)
     {
-        $user = \Auth::guard('admin')->user();
-
         $selectedDate = $request->input('date', Carbon::today()->toDateString());
 
         $previousDate = Carbon::parse($selectedDate)->subDay()->toDateString();
@@ -40,24 +39,64 @@ class AdminAttendanceController extends Controller
         ));
     }
 
+    // 管理者が見る、特定ユーザーの月間勤怠一覧
+    public function showUserAttendances(Request $request, User $user)
+    {
+        // 対象月取得
+        $targetMonth = $request->input('month', Carbon::now()->format('Y-m'));
+
+        $startOfMonth = Carbon::parse($targetMonth)->startOfMonth();
+        $endOfMonth = Carbon::parse($targetMonth)->endOfMonth();
+
+        $prevMonth = $startOfMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $startOfMonth->copy()->addMonth()->format('Y-m');
+
+        $attendances = $user->attendances()
+            ->whereBetween('work_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->get()
+            ->keyBy('work_date');
+
+        $days = [];
+        $date = $startOfMonth->copy();
+        while ($date <= $endOfMonth) {
+            $workDate = $date->toDateString();
+            $days[] = [
+                'date' => $workDate,
+                'formatted' => $date->format('Y/m/d'),
+                'weekday' => ['日', '月', '火', '水', '木', '金', '土'][$date->dayOfWeek],
+                'attendance' => $attendances->get($workDate),
+            ];
+            $date->addDay();
+        }
+
+        return view('admin.users.attendances', compact(
+            'user',
+            'targetMonth',
+            'prevMonth',
+            'nextMonth',
+            'days'
+        ));
+    }
+
     public function show($id)
     {
-        // ここで最新の情報を取得することが重要
         $attendance = Attendance::findOrFail($id);
 
         $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
             ->where('status', 'pending')
             ->exists();
 
-        return view('attendance.detail', [
-            'attendance' => $attendance,
-            'isPending' => $isPending,
-            'layout' => 'layouts.admin_app',
-        ]);
+        $layout = 'layouts.admin_app';
+        $canEdit = true;
+
+        return view('attendance.detail', compact('attendance', 'isPending', 'layout', 'canEdit'));
     }
 
     public function update(UpdateAttendanceRequest $request, $id)
     {
+
+        \Log::debug('更新リクエスト', $request->all());
+
         // リクエストがバリデーションを通過しているときのみ処理を進める
         $attendance = Attendance::findOrFail($id);
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin_app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/list.css') }}">
@@ -7,37 +7,38 @@
 @section('content')
 <div class="content">
     <div class="list__content">
-        <h2 class="list__title">申請一覧</h2>
+        <h2 class="list__title">修正申請一覧</h2>
+
         @php
-            $currentStatus = $status ?? 'pending'; // コントローラーから渡された変数
+            $currentStatus = $status ?? 'pending';
         @endphp
 
         <div class="link-btn" role="group">
-            <a href="{{ route('user.attendance_corrections.list', ['status' => 'pending']) }}"
-            class="btn btn-sm link-btn_a {{ $currentStatus === 'pending' ? 'active' : '' }}">
-                承認待ち
+            <a href="{{ route('admin.attendance_corrections.index', ['status' => 'pending']) }}"
+               class="btn btn-sm link-btn_a {{ $currentStatus === 'pending' ? 'active' : '' }}">
+               承認待ち
             </a>
-            <a href="{{ route('user.attendance_corrections.list', ['status' => 'approved']) }}"
-            class="btn btn-sm link-btn_a {{ $currentStatus === 'approved' ? 'active' : '' }}">
-                承認済み
+
+            <a href="{{ route('admin.attendance_corrections.index', ['status' => 'approved']) }}"
+               class="btn btn-sm link-btn_a {{ $currentStatus === 'approved' ? 'active' : '' }}">
+               承認済み
             </a>
         </div>
 
         @if ($corrections->isEmpty())
-            <p>該当する申請はありません。</p>
+            <p>修正申請はありません。</p>
         @else
-
         <div class="list-table">
             <table class="list-table__inner">
                 <tr class="list-table__row">
-                    <th class="list-table__header">状態</th>
-                    <th class="list-table__header">名前</th>
-                    <th class="list-table__header">対象日時</th>
-                    <th class="list-table__header">申請理由</th>
-                    <th class="list-table__header">申請日時</th>
-                    <th class="list-table__header">詳細</th>
-                </tr>
-            @foreach ($corrections as $correction)
+                        <th class="list-table__header">状態</th>
+                        <th class="list-table__header">名前</th>
+                        <th class="list-table__header">対象日時</th>
+                        <th class="list-table__header">申請理由</th>
+                        <th class="list-table__header">申請日時</th>
+                        <th class="list-table__header">詳細</th>
+                    </tr>
+                    @foreach ($corrections as $correction)
                 <tr>
                     <td class="list-table__td">
                         @switch($correction->status)
@@ -59,20 +60,13 @@
                     <td class="list-table__td">{{ $correction->note }}</td>
                     <td class="list-table__td">{{ $correction->created_at->format('Y-m-d H:i') }}</td>
                     <td class="list-table__td">
-                        @if ($correction->attendance)
-                            <a href="{{ route('attendance.detail', $correction->attendance->id) }}" class="detail-a">詳細</a>
-                        @else
-                            <span class="text-muted">データなし</span>
-                        @endif
+                        <a href="{{ url('/admin/requests/' . $correction->id) }}" class="detail-a">詳細</a>
                     </td>
                 </tr>
                 @endforeach
             </table>
-
-            {{-- ページネーション --}}
-            {{ $corrections->links() }}
         </div>
-    @endif
+        @endif
     </div>
 </div>
 @endsection

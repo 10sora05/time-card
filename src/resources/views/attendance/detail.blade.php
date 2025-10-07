@@ -20,13 +20,13 @@
         @endphp
 
         <form method="POST" action="{{ $isAdmin
-            ? route('admin.attendance.update', $attendance->id)
-            : route('user.attendance.correction.store', $attendance->id) }}">
+            ? route('admin.attendances.update', $attendance->id)
+            : route('attendance.update', $attendance->id) }}">
             @csrf
             @if($isAdmin)
                 @method('PUT')
             @endif
-                        <div class="detail-table">
+            <div class="detail-table">
                 <table class="detail-table__inner">
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>名前</label></th>
@@ -36,7 +36,8 @@
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>日付</label></th>
                             <td class="detail-table__td">
-                                <span>　{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年') }}</span><span class="detail-deta">　{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年') }}</span>
+                                <span class="detail-deta">{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
                             </td>
                         </tr>
 

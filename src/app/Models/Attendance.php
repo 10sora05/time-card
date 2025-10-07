@@ -7,12 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
     protected $fillable = [
-        'employee_name',
-        'start_time',
-        'end_time',
-        'break_minutes',
-        'total_minutes',
-        'work_date',
+    'user_id',
+    'employee_name',
+    'start_time',
+    'end_time',
+    'break_start_time',
+    'break_end_time',
+    'break2_start_time',
+    'break2_end_time',
+    'break_minutes',
+    'total_minutes',
+    'work_date',
+    'note',
     ];
 
     // アクセサ：分を hh:mm 形式に変換（例）
@@ -22,5 +28,10 @@ class Attendance extends Model
         $hours = floor($this->total_minutes / 60);
         $minutes = $this->total_minutes % 60;
         return sprintf('%02d:%02d', $hours, $minutes);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

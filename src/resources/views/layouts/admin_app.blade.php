@@ -19,22 +19,22 @@
         </a>
         <nav>
           <ul class="header-nav">
-            @if (Auth::check())
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/admin/attendances">勤怠一覧</a>
-            </li>
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/admin/mypage">スタッフ一覧</a>
-            </li>
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/admin/requests">申請一覧</a>
-            </li>
-            <li class="header-nav__item">
-              <form class="form" action="/logout" method="post">
-                @csrf
-                <button class="header-nav__button">ログアウト</button>
-              </form>
-            </li>
+            @if (Auth::guard('admin')->check())
+              <li class="header-nav__item">
+                <a class="header-nav__link" href="/admin/attendances">勤怠一覧</a>
+              </li>
+              <li class="header-nav__item">
+                <a class="header-nav__link" href="/admin/users">スタッフ一覧</a>
+              </li>
+              <li class="header-nav__item">
+                <a class="header-nav__link" href="/admin/requests">申請一覧</a>
+              </li>
+              <li class="header-nav__item">
+                <form class="form" action="/logout" method="post">
+                  @csrf
+                  <button class="header-nav__button">ログアウト</button>
+                </form>
+              </li>
             @endif
           </ul>
         </nav>

@@ -10,19 +10,48 @@ use App\Models\AttendanceCorrection;
 
 class AdminAttendanceCorrectionController extends Controller
 {
+   /**
+     * 修正申請一覧（管理者用）
+     */
+    public function index(Request $request)
+    {
+        $status = $request->input('status', 'pending'); // デフォルト: 承認待ち
+
+        $query = AttendanceCorrection::with(['user', 'attendance']);
+
+        if (in_array($status, ['pending', 'approved'])) {
+            $query->where('status', $status);
+        }
+
+        $corrections = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        return view('admin.requests.index', compact('corrections', 'status'));
+    }
+
+    /**
+     * 申請詳細(承認画面)
+     */
+    public function show($id)
+    {
+        $correction = AttendanceCorrection::with('attendance', 'user')->findOrFail($id);
+        return view('admin.requests.detail', [
+            'correction' => $correction,
+        ]);
+    }
+
+    // 承認処理
     public function update(AttendanceCorrectionRequest $request, $id)
     {
-        // 修正申請レコードを取得
-        $correction = AttendanceCorrection::findOrFail($id);
 
-        // ステータス（approved or rejected）をリクエストから受け取る想定
+        \Log::debug('更新リクエスト', $request->all());
+
+        $correction = AttendanceCorrection::findOrFail($id);
         $status = $request->input('status');
 
-        if (!in_array($status, ['approved', 'rejected'])) {
+        if (!in_array($status, ['pending', 'approved', 'rejected'])) {
             return redirect()->back()->withErrors('無効なステータスです。');
         }
 
-        // 承認ならAttendanceも更新
         if ($status === 'approved') {
             $attendance = $correction->attendance;
             if ($attendance) {
@@ -38,40 +67,11 @@ class AdminAttendanceCorrectionController extends Controller
             }
         }
 
-        // 修正申請の状態更新
         $correction->status = $status;
-        $correction->reviewed_at = now(); // もし審査日時も管理したいなら
+        $correction->reviewed_at = now();
         $correction->save();
 
-        return redirect()->back()->with('success', '修正申請の状態を更新しました。');
-    }
-
-    /**
-     * 修正申請一覧（管理者用）
-     */
-    public function index(Request $request)
-    {
-        $status = $request->input('status', 'pending'); // デフォルト: 承認待ち
-
-        $query = AttendanceCorrection::with(['user', 'attendance']);
-
-        if (in_array($status, ['pending', 'approved'])) {
-            $query->where('status', $status);
-        }
-
-        $corrections = $query->orderBy('created_at', 'desc')->paginate(15);
-
-        return view('admin.requests', compact('corrections', 'status'));
-    }
-
-    /**
-     * 詳細画面（申請詳細）
-     */
-    public function show($id)
-    {
-        $correction = AttendanceCorrection::with(['user', 'attendance'])->findOrFail($id);
-
-        return view('admin.request_detail', compact('correction'));
+        return redirect()->route('admin.attendance_corrections.index')->with('success', '申請の状態を更新しました。');
     }
 
 }

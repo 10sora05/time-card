@@ -70,15 +70,15 @@ class AttendanceController extends Controller
             }
 
             if ($attendance) {
-            // DBに保存されている total_minutes / break_minutes を CarbonInterval に変換
-            if ($attendance->total_minutes !== null) {
-                $workDuration = CarbonInterval::minutes($attendance->total_minutes);
-            }
+                // DBに保存されている total_minutes / break_minutes を CarbonInterval に変換
+                if ($attendance->total_minutes !== null) {
+                    $workDuration = CarbonInterval::minutes($attendance->total_minutes);
+                }
 
-            if ($attendance->break_minutes !== null) {
-                $breakDuration = CarbonInterval::minutes($attendance->break_minutes);
+                if ($attendance->break_minutes !== null) {
+                    $breakDuration = CarbonInterval::minutes($attendance->break_minutes);
+                }
             }
-        }
 
         }
 
@@ -102,13 +102,13 @@ class AttendanceController extends Controller
             ->whereDate('work_date', $now->toDateString())
             ->exists();
 
-        // 本番環境では1回しか打刻できないように制限
         if (app()->environment('production') && $exists) {
             return redirect()->back()->with('error', '本日はすでに出勤済みです。');
         }
 
         // 出勤記録を作成
         Attendance::create([
+            'user_id' => $user->id,
             'employee_name' => $user->name,
             'start_time' => $now->format('H:i:s'),
             'work_date' => $now->toDateString(),
@@ -203,8 +203,8 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', '休憩（2回目）が終了していません。');
         }
 
-    return redirect()->back()->with('error', '休憩は2回までです。');
-}
+        return redirect()->back()->with('error', '休憩は2回までです。');
+    }
 
     public function breakEnd()
     {
@@ -294,17 +294,20 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
+        $isAdmin = auth('admin')->check();
+        $isUser = auth('web')->check();
+
         $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
+            ->when($isUser, fn($q) => $q->where('user_id', auth()->id()))
             ->where('status', 'pending')
             ->exists();
 
-        return view('attendance.detail', [
-            'attendance' => $attendance,
-            'isPending' => $isPending,
-            'layout' => 'layouts.app',
-        ]);
-    }
+        $layout = $isAdmin ? 'layouts.admin_app' : 'layouts.app';
+        $canEdit = $isAdmin || ($isUser && !$isPending);
 
+        return view('attendance.detail', compact('attendance', 'isPending', 'layout', 'canEdit'));
+    }
+    
     public function update(Request $request, $id)
     {
         $attendance = Attendance::findOrFail($id);

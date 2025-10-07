@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin_app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/list.css') }}">
@@ -84,7 +84,7 @@
 
                     <td class="list-table__td">
                         @if (!empty($day['attendance']))
-                            <a href="{{ route('attendance.detail', $day['attendance']->id) }}" class="detail-a">詳細</a>
+                            <a href="{{ route('attendance.show', $day['attendance']->id) }}" class="detail-a">詳細</a>
                         @else
                             　
                         @endif
