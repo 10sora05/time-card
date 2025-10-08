@@ -11,10 +11,10 @@
     <h2 class="attendance__title">{{ \Carbon\Carbon::parse($selectedDate)->format('Y年m月d日') }}の勤怠</h2>
     <div class="attendance__date">
       <span>
-        <a href="{{ route('admin.attendances', ['date' => $previousDate]) }}" class="page-turn">← 前日</a>
+        <a href="{{ route('admin.attendances.index', ['date' => $previousDate]) }}" class="page-turn">← 前日</a>
       </span>
 
-      <form method="GET" action="{{ route('admin.attendances') }}" id="dateForm">
+      <form method="GET" action="{{ route('admin.attendances.index') }}" id="dateForm">
           <label for="fake-date">📅</label>
 
           <!-- 表示専用の span（ユーザーが見る部分） -->
@@ -27,8 +27,7 @@
       </form>
 
       <span>
-        <a href="{{ route('admin.attendances', ['date' => $nextDate]) }}" class="page-turn">翌日 →</a>
-      </span>
+        <a href="{{ route('admin.attendances.index', ['date' => $nextDate]) }}" class="page-turn">翌日 →</a>      </span>
     </div>
     <div class="attendance-table">
       <table class="attendance-table__inner">

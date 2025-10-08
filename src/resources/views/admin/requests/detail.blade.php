@@ -7,7 +7,7 @@
 @section('content')
 <div class="content">
     <div class="container">
-        <h2>勤怠詳細</h2>
+        <h2>| 勤怠詳細</h2>
 
             <div class="detail-table">
                 <table class="detail-table__inner">

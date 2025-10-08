@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.admin_app')
 
 @php
-    $canEdit = !$isPending && auth('web')->check();
+    $canEdit = auth('admin')->check() || (!$isPending && auth()->check());
 @endphp
 
 @section('css')
@@ -13,7 +13,7 @@
     <div class="container">
         <h2>| 勤怠詳細</h2>
 
-        <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
+        <form method="POST" action="{{ route('admin.attendances.update', $attendance->id) }}">
             @csrf
             @method('PUT')
             <div class="detail-table">
@@ -25,11 +25,11 @@
 
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>日付</label></th>
-                        <td class="detail-table__td">
-                            <span>{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年') }}</span>
-                            <span class="detail-deta">{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
-                        </td>
-                    </tr>
+                            <td class="detail-table__td">
+                                <span>{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年') }}</span>
+                                <span class="detail-deta">{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
+                            </td>
+                        </tr>
 
                     <tr class="detail-table__row">
                         <th class="detail-table__th"><label>出勤・退勤</label></th>
@@ -100,9 +100,9 @@
                         <td class="detail-table__td">
                             <textarea name="note" rows="3" class="note-textarea" @unless($canEdit) disabled @endunless>{{ old('note', $attendance->note) }}</textarea>
 
-                            @error('note')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
+                        @error('note')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                         </td>
                     </tr>
                 </table>

@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Attendance;  // Attendanceモデルをインポート
-use App\Http\Requests\AttendanceCorrectionRequest;
+use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 
 class AdminAttendanceCorrectionController extends Controller
@@ -40,7 +39,7 @@ class AdminAttendanceCorrectionController extends Controller
     }
 
     // 承認処理
-    public function update(AttendanceCorrectionRequest $request, $id)
+    public function update(Request $request, $id)
     {
 
         \Log::debug('更新リクエスト', $request->all());
@@ -68,7 +67,6 @@ class AdminAttendanceCorrectionController extends Controller
         }
 
         $correction->status = $status;
-        $correction->reviewed_at = now();
         $correction->save();
 
         return redirect()->route('admin.attendance_corrections.index')->with('success', '申請の状態を更新しました。');

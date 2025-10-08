@@ -74,6 +74,11 @@
     margin-left: 27%;
 }
 
+.error-message {
+    color: red;
+    margin-top: 4px;
+}
+
 /* 申請承認ページ用 */
 
 .time-separator {

@@ -7,7 +7,7 @@
 @section('content')
 <div class="content">
     <div class="list__content">
-        <h2 class="list__title">修正申請一覧</h2>
+        <h2 class="list__title">| 申請一覧</h2>
 
         @php
             $currentStatus = $status ?? 'pending';
@@ -39,7 +39,7 @@
                         <th class="list-table__header">詳細</th>
                     </tr>
                     @foreach ($corrections as $correction)
-                <tr>
+                <tr class="list-table__row">
                     <td class="list-table__td">
                         @switch($correction->status)
                             @case('pending')

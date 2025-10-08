@@ -5,6 +5,7 @@ use App\Http\Controllers\User\Auth\UserLoginController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\User\Auth\UserRegisterController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\Admin\AdminAttendanceCorrectionController;
 use App\Http\Controllers\User\AttendanceCorrectionController;
@@ -58,11 +59,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('requests/{id}', [AdminAttendanceCorrectionController::class, 'show'])->name('attendance_corrections.show');
     Route::put('requests/{id}', [AdminAttendanceCorrectionController::class, 'update'])->name('attendance_corrections.update');
 
-    // 他の管理者用ルートもここにまとめても良い
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::get('users/{user}/attendances', [AdminAttendanceController::class, 'userAttendances'])->name('users.attendances.index');
+    // スタッフ別勤怠（月間）
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}/attendances', [AdminAttendanceController::class, 'showUserAttendances'])->name('users.attendances.index');
 
-    Route::get('attendances', [AdminAttendanceController::class, 'index'])->name('attendances');
+    Route::get('attendances', [AdminAttendanceController::class, 'index'])->name('attendances.index');
     Route::get('attendances/{id}', [AdminAttendanceController::class, 'show'])->name('attendances.show');
     Route::put('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('attendances.update');
 });

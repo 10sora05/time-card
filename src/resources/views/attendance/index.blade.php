@@ -60,25 +60,6 @@
         <p class="data">{{ $now->format('Y年m月d日') }}（{{ $weekday }}）</p>
         <p class="data_time">{{ $now->format('H:i') }}</p>
 
-        {{-- 勤務時間と休憩時間の表示 --}}
-        <p class="data">
-            勤務時間：
-            @if ($workDuration)
-                {{ $workDuration->format('%H時間%i分') }}
-            @else
-                データ未取得（または未退勤）
-            @endif
-        </p>
-
-        <p class="data">
-            休憩時間：
-            @if ($breakDuration)
-                {{ $breakDuration->format('%H時間%i分') }}
-            @else
-                データ未取得（または休憩未登録）
-            @endif
-        </p>
-
         {{-- フラッシュメッセージ --}}
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>

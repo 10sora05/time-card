@@ -294,21 +294,17 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
-        $isAdmin = auth('admin')->check();
-        $isUser = auth('web')->check();
-
         $isPending = AttendanceCorrection::where('attendance_id', $attendance->id)
-            ->when($isUser, fn($q) => $q->where('user_id', auth()->id()))
+            ->where('user_id', auth()->id())
             ->where('status', 'pending')
             ->exists();
 
-        $layout = $isAdmin ? 'layouts.admin_app' : 'layouts.app';
-        $canEdit = $isAdmin || ($isUser && !$isPending);
+        $canEdit = !$isPending;
 
-        return view('attendance.detail', compact('attendance', 'isPending', 'layout', 'canEdit'));
+        return view('attendance.detail', compact('attendance', 'isPending', 'canEdit'));
     }
     
-    public function update(Request $request, $id)
+    public function update(UpdateAttendanceRequest $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
 

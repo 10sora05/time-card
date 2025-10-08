@@ -31,7 +31,7 @@ class AdminAttendanceController extends Controller
 
         $attendances = Attendance::whereDate('work_date', $selectedDate)->get();
 
-        return view('admin.attendances', compact(
+        return view('admin.attendances.index', compact(
             'attendances',
             'selectedDate',
             'previousDate',
@@ -86,10 +86,9 @@ class AdminAttendanceController extends Controller
             ->where('status', 'pending')
             ->exists();
 
-        $layout = 'layouts.admin_app';
         $canEdit = true;
 
-        return view('attendance.detail', compact('attendance', 'isPending', 'layout', 'canEdit'));
+        return view('admin.attendances.detail', compact('attendance', 'isPending', 'canEdit'));
     }
 
     public function update(UpdateAttendanceRequest $request, $id)
@@ -97,7 +96,6 @@ class AdminAttendanceController extends Controller
 
         \Log::debug('更新リクエスト', $request->all());
 
-        // リクエストがバリデーションを通過しているときのみ処理を進める
         $attendance = Attendance::findOrFail($id);
 
         // 管理者が勤怠情報を更新処理

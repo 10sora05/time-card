@@ -21,7 +21,7 @@
                 <td class="attendance-table__td">{{ $user->name }}</td>
                 <td class="attendance-table__td">{{ $user->email }}</td>
                 <td class="attendance-table__td">
-                    <a href="{{ route('admin.users.attendances.index', $user->id) }}" class="detail">詳細</a>
+                    <a href="{{ route('admin.users.attendances.index', ['user' => $user->id]) }}" class="detail">詳細</a>
                 </td>
             </tr>
                 @endforeach
