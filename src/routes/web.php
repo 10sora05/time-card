@@ -10,8 +10,28 @@ use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\Admin\AdminAttendanceCorrectionController;
 use App\Http\Controllers\User\AttendanceCorrectionController;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
+// メール認証通知表示ページ
+Route::get('/email/verify', function () {
+    return view('auth.verify-email'); // 標準的なビューを用意しておく
+})->middleware('auth')->name('verification.notice');
 
+// メール認証リンク処理
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill(); // 認証完了処理
+
+    return redirect('/dashboard'); // 認証後のリダイレクト先
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// メール認証再送信処理
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    // メール再送信後にトップページへ移動
+    return redirect('/attendance')->with('message', '認証メールを再送信しました。');
+    })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // 一般ユーザー用ログイン・ログアウト
 Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
@@ -48,8 +68,8 @@ Route::middleware('auth:web')->group(function () {
         Route::post('/{id}/correction', [AttendanceCorrectionController::class, 'store'])->name('user.attendance.correction.store');
     });
 
-            // 勤怠修正申請一覧（URLを変更）
-    Route::get('/stamp_correction_request/list', [AttendanceCorrectionController::class, 'list'])
+        // 勤怠修正申請一覧（URLを変更）
+        Route::get('/stamp_correction_request/list', [AttendanceCorrectionController::class, 'list'])
         ->name('user.attendance_corrections.list');
 });
 

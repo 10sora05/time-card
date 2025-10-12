@@ -57,3 +57,8 @@
     margin-top: 20px;
     text-align: center;
 }
+
+.register__button-submit {
+    color: #0074cc;
+    text-decoration: none;
+}

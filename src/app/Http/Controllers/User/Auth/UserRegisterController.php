@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
 class UserRegisterController extends Controller
 {
@@ -31,9 +32,13 @@ class UserRegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // 登録後すぐログインさせる（任意）
+        // 登録後にメール認証通知を送るためのイベントを発火
+        event(new Registered($user));
+
+        // すぐログインさせる（任意）
         Auth::guard('web')->login($user);
 
-        return redirect('/attendance');
+        // メール認証案内ページにリダイレクト
+        return redirect()->route('verification.notice');
     }
 }

@@ -8,8 +8,7 @@ class UpdateAttendanceRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // 管理者ログイン時のみ許可
-        return auth('admin')->check();
+        return true;
     }
 
     public function rules(): array
