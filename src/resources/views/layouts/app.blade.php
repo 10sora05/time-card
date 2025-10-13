@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,8 +11,11 @@
 </head>
 
 <body>
-  <header class="header">
-    <div class="header__inner">
+  @hasSection('custom_header')
+    @yield('custom_header')
+  @else
+    <header class="header">
+      <div class="header__inner">
         <a href="/attendance">
           <img class="header__logo" src="{{ asset('images/logo.svg') }}">
         </a>
@@ -39,13 +41,12 @@
           </ul>
         </nav>
       </div>
-    </div>
-  </header>
+    </header>
+  @endif
 
   <main>
     @yield('content')
   </main>
   @stack('scripts')
 </body>
-
 </html>

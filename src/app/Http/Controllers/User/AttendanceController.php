@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use App\Models\AttendanceCorrection;
 use App\Http\Requests\UpdateAttendanceRequest;
-use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {

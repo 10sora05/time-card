@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\Admin\AdminAttendanceCorrectionController;
 use App\Http\Controllers\User\AttendanceCorrectionController;
-use App\Http\Controllers\Admin\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -22,7 +21,7 @@ Route::get('/email/verify', function () {
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill(); // 認証完了処理
 
-    return redirect('/dashboard'); // 認証後のリダイレクト先
+    return redirect('/attendance'); // 認証後のリダイレクト先
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 // メール認証再送信処理
@@ -31,7 +30,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     // メール再送信後にトップページへ移動
     return redirect('/attendance')->with('message', '認証メールを再送信しました。');
-    })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // ユーザー登録
 Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');

@@ -8,7 +8,6 @@ use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use Illuminate\Support\Facades\Auth;
 
-
 class AttendanceCorrectionController extends Controller
 {
     public function store(Request $request, $id)
@@ -58,5 +57,4 @@ class AttendanceCorrectionController extends Controller
 
         return view('stamp_correction_request.list', compact('corrections', 'status'));
     }
-
 }
