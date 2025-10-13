@@ -101,7 +101,7 @@ class AttendanceController extends Controller
             ->whereDate('work_date', $now->toDateString())
             ->exists();
 
-        if (app()->environment('production') && $exists) {
+        if ($exists) {
             return redirect()->back()->with('error', '本日はすでに出勤済みです。');
         }
 
@@ -331,6 +331,24 @@ class AttendanceController extends Controller
         ]);
 
         return redirect()->back()->with('success', '修正申請を送信しました。承認をお待ちください。');
+    }
+
+    public function status(Request $request)
+    {
+        $status = $request->query('status');
+
+        $statusMap = [
+            'out_of_work' => '勤務外',
+            'working'     => '出勤中',
+            'on_break'    => '休憩中',
+            'finished'    => '退勤済',
+        ];
+
+        if (!array_key_exists($status, $statusMap)) {
+            return response('不明なステータス', 400);
+        }
+
+        return response($statusMap[$status], 200);
     }
 
 }

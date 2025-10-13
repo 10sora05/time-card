@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttendanceCorrection extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'attendance_id',
         'user_id',

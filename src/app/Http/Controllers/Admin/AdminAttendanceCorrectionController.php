@@ -72,4 +72,13 @@ class AdminAttendanceCorrectionController extends Controller
         return redirect()->route('admin.attendance_corrections.index')->with('success', '申請の状態を更新しました。');
     }
 
+    public function approve($id)
+    {
+        $correction = AttendanceCorrection::findOrFail($id);
+        $correction->status = 'approved';
+        $correction->save();
+
+        return redirect()->route('admin.attendance_corrections.index', ['status' => 'pending']);
+    }
+
 }

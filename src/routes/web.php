@@ -11,27 +11,21 @@ use App\Http\Controllers\Admin\AdminAttendanceCorrectionController;
 use App\Http\Controllers\User\AttendanceCorrectionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\EmailVerificationController;
 
 // メール認証通知表示ページ
-Route::get('/email/verify', function () {
-    return view('auth.verify-email'); // 標準的なビューを用意しておく
-})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify', [EmailVerificationController::class, 'showNotice'])
+    ->middleware('auth')
+    ->name('verification.notice');
 
-// メール認証リンク処理
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill(); // 認証完了処理
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
 
-    return redirect('/attendance'); // 認証後のリダイレクト先
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-// メール認証再送信処理
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    // メール再送信後にトップページへ移動
-    return redirect('/attendance')->with('message', '認証メールを再送信しました。');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+    
 // ユーザー登録
 Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
 Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
@@ -78,6 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('requests', [AdminAttendanceCorrectionController::class, 'index'])->name('attendance_corrections.index');
     Route::get('requests/{id}', [AdminAttendanceCorrectionController::class, 'show'])->name('attendance_corrections.show');
     Route::put('requests/{id}', [AdminAttendanceCorrectionController::class, 'update'])->name('attendance_corrections.update');
+    Route::post('requests/{id}/approve', [AdminAttendanceCorrectionController::class, 'approve'])->name('attendance_corrections.approve');
 
     // スタッフ別勤怠（月間）
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
@@ -87,3 +82,5 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('attendances/{id}', [AdminAttendanceController::class, 'show'])->name('attendances.show');
     Route::put('attendances/{id}', [AdminAttendanceController::class, 'update'])->name('attendances.update');
 });
+
+Route::get('/attendance/status', [AttendanceController::class, 'status'])->name('attendance.status');
