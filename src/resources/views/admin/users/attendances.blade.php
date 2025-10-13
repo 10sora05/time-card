@@ -7,26 +7,29 @@
 @section('content')
 <div class="content">
     <div class="list__content">
-        <h2 class="list__title">勤怠一覧</h2>
-        <div class="month-nav">
-            <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="page-turn">← 前月</a>
 
-            {{-- 📅 月選択（中央） --}}
-            <form method="GET" action="{{ route('attendance.list') }}" style="position: relative;">
-                {{-- ラベル表示（クリックでinputが開く） --}}
-                <label for="month-picker" style="cursor: pointer;">
+        <h2 class="list__title">{{ $user->name }} さんの勤怠</h2>
+
+        <div class="month-nav">
+            <a href="{{ route('admin.users.attendances.index', ['user' => $user->id, 'month' => $prevMonth]) }}" class="page-turn">← 前月</a>
+            
+            <form method="GET" action="{{ route('admin.users.attendances.index', ['user' => $user->id]) }}" class="month-picker-form">
+                <label for="month-picker" class="month-picker-label">
                     📅 {{ \Carbon\Carbon::parse($targetMonth)->format('Y/m') }}
                 </label>
-
-                {{-- 実際の月ピッカー（見えないけどクリック可能） --}}
-                <input type="month" id="month-picker" name="month"
-                    value="{{ $targetMonth }}"
-                    onchange="this.form.submit()"
-                    style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                <input 
+                    type="month" 
+                    id="month-picker" 
+                    name="month" 
+                    value="{{ $targetMonth }}" 
+                    onchange="this.form.submit()" 
+                    class="month-picker-input"
+                >
             </form>
 
-            <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="page-turn">翌月 →</a>
+            <a href="{{ route('admin.users.attendances.index', ['user' => $user->id, 'month' => $nextMonth]) }}" class="page-turn">翌月 →</a>
         </div>
+        
         <div class="list-table">
             <table class="list-table__inner">
                 <tr class="list-table__row">
@@ -84,7 +87,7 @@
 
                     <td class="list-table__td">
                         @if (!empty($day['attendance']))
-                            <a href="{{ route('attendance.show', $day['attendance']->id) }}" class="detail-a">詳細</a>
+                            <a href="{{ route('admin.attendances.show', $day['attendance']->id) }}" class="detail-a">詳細</a>
                         @else
                             　
                         @endif

@@ -33,14 +33,14 @@ Route::post('/email/verification-notification', function (Request $request) {
     return redirect('/attendance')->with('message', '認証メールを再送信しました。');
     })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
+// ユーザー登録
+Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
+Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
+
 // 一般ユーザー用ログイン・ログアウト
 Route::get('/login', [UserLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserLoginController::class, 'login']);
 Route::post('/logout', [UserLoginController::class, 'logout'])->name('logout');
-
-// ユーザー登録
-Route::get('/user_register', [UserRegisterController::class, 'show'])->name('user.register.show');
-Route::post('/user_register', [UserRegisterController::class, 'register'])->name('user.register');
 
 // 管理者ログイン処理
 Route::prefix('admin')->group(function () {
@@ -73,6 +73,7 @@ Route::middleware('auth:web')->group(function () {
         ->name('user.attendance_corrections.list');
 });
 
+// 管理者ユーザー用ルート
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
     // 勤怠修正申請（申請一覧・詳細・承認・却下）
     Route::get('requests', [AdminAttendanceCorrectionController::class, 'index'])->name('attendance_corrections.index');

@@ -9,6 +9,7 @@
     color: #000;
 }
 
+/* 勤怠月表示ページ用 */
 .page-turn {
     color: #737373;
     text-decoration: none;
@@ -28,6 +29,29 @@
     font-weight: bold;
     color: #000;
 }
+
+.month-picker-form {
+    position: relative;
+    display: inline-block;
+}
+
+.month-picker-label {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.month-picker-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    /* これで隠れた状態でクリック可能 */
+    cursor: pointer;
+}
+
+/* 勤怠月表示ページ用 ここまで */
 
 .list-table {
     text-align: center;
@@ -79,3 +103,5 @@
     font-weight: bold;
     color: #000;
 }
+
+/* 申請一覧ページ用 ここまで */
