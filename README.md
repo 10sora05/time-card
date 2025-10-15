@@ -112,7 +112,7 @@ password: password
 
 ## ER図
 
-<img src="ER.drawio.png" alt="ERimg">
+<img src="ER.png" alt="ERimg">
 
 
 
