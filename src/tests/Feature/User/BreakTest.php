@@ -12,6 +12,13 @@ class BreakTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_user_can_start_and_end_multiple_breaks()
     {
         $user = User::factory()->create();

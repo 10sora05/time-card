@@ -10,6 +10,13 @@ class RegisterTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     /** @test */
     public function 名前が未入力の場合_バリデーションエラーが表示される()
     {

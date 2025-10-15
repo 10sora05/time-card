@@ -31,14 +31,14 @@
         <div class="list-table">
             <table class="list-table__inner">
                 <tr class="list-table__row">
-                        <th class="list-table__header">状態</th>
-                        <th class="list-table__header">名前</th>
-                        <th class="list-table__header">対象日時</th>
-                        <th class="list-table__header">申請理由</th>
-                        <th class="list-table__header">申請日時</th>
-                        <th class="list-table__header">詳細</th>
-                    </tr>
-                    @foreach ($corrections as $correction)
+                    <th class="list-table__header">状態</th>
+                    <th class="list-table__header">名前</th>
+                    <th class="list-table__header">対象日時</th>
+                    <th class="list-table__header">申請理由</th>
+                    <th class="list-table__header">申請日時</th>
+                    <th class="list-table__header">詳細</th>
+                </tr>
+                @foreach ($corrections as $correction)
                 <tr class="list-table__row">
                     <td class="list-table__td">
                         @switch($correction->status)

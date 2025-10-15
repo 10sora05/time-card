@@ -11,6 +11,13 @@ class AttendancesListTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_admin_can_view_attendance_list_with_correct_date_and_navigation_links()
     {
         // 管理者ユーザー作成

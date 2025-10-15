@@ -11,6 +11,13 @@ class AttendanceDetailTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_admin_can_view_attendance_detail()
     {
         $admin = Admin::factory()->create();

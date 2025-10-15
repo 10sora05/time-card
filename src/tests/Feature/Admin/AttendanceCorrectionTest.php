@@ -13,6 +13,13 @@ class AttendanceCorrectionTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_admin_can_view_pending_corrections()
     {
         $admin = Admin::factory()->create();

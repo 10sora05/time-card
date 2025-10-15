@@ -13,6 +13,13 @@ class UserAttendancesTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_admin_can_view_user_attendances_and_navigate_months_and_access_detail()
     {
         // 管理者ユーザー作成

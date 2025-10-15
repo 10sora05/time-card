@@ -10,6 +10,7 @@
 }
 
 /* 勤怠月表示ページ用 */
+
 .page-turn {
     color: #737373;
     text-decoration: none;
@@ -47,7 +48,6 @@
     width: 100%;
     height: 100%;
     opacity: 0;
-    /* これで隠れた状態でクリック可能 */
     cursor: pointer;
 }
 

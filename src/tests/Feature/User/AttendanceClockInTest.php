@@ -11,6 +11,13 @@ class AttendanceClockInTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_can_clock_in_once_per_day()
     {
         $user = User::factory()->create();

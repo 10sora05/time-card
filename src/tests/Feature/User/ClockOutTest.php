@@ -12,6 +12,13 @@ class ClockOutTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_user_can_clock_out_and_see_it_in_attendance_list()
     {
         $user = User::factory()->create();

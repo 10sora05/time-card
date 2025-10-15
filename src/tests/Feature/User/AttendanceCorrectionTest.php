@@ -13,6 +13,13 @@ class AttendanceCorrectionTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_validation_errors_on_invalid_input()
     {
         $user = User::factory()->create();

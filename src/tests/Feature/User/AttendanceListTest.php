@@ -12,6 +12,13 @@ class AttendanceListTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_attendance_list_displays_users_own_records()
     {
         $user = User::factory()->create();

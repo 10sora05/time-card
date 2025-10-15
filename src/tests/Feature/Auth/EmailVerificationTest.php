@@ -15,6 +15,13 @@ class EmailVerificationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed();
+    }
+
     public function test_registration_sends_verification_email(): void
     {
         Notification::fake();

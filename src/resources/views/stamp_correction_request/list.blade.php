@@ -68,9 +68,6 @@
                 </tr>
                 @endforeach
             </table>
-
-            {{-- ページネーション --}}
-            {{ $corrections->links() }}
         </div>
     @endif
     </div>

@@ -15,15 +15,15 @@
       </span>
 
       <form method="GET" action="{{ route('admin.attendances.index') }}" id="dateForm">
-          <label for="fake-date">📅</label>
+        <label for="fake-date">📅</label>
 
-          <!-- 表示専用の span（ユーザーが見る部分） -->
-          <span id="fake-date" class="attendance__date-title">
-              {{ \Carbon\Carbon::parse($selectedDate)->format('Y/m/d') }}
-          </span>
+        <!-- 表示専用の span（ユーザーが見る部分） -->
+        <span id="fake-date" class="attendance__date-title">
+            {{ \Carbon\Carbon::parse($selectedDate)->format('Y/m/d') }}
+        </span>
 
-          <!-- 実際に送信される hidden input -->
-          <input type="hidden" id="date" name="date" value="{{ $selectedDate }}">
+        <!-- 実際に送信される hidden input -->
+        <input type="hidden" id="date" name="date" value="{{ $selectedDate }}">
       </form>
 
       <span>

@@ -9,13 +9,12 @@
     <div class="container">
         <h2>| 勤怠詳細</h2>
 
-            <div class="detail-table">
-                <table class="detail-table__inner">
-                    <tr class="detail-table__row">
-                        <th class="detail-table__th"><label>名前</label></th>
-                        <td class="detail-table__td">{{ $correction->user->name }}</td>
-                    </tr>
-                <tr>
+        <div class="detail-table">
+            <table class="detail-table__inner">
+                <tr class="detail-table__row">
+                    <th class="detail-table__th"><label>名前</label></th>
+                    <td class="detail-table__td">{{ $correction->user->name }}</td>
+                </tr>
 
                 <tr class="detail-table__row">
                     <th class="detail-table__th"><label>日付</label></th>
