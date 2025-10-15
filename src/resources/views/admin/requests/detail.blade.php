@@ -81,7 +81,7 @@
                 <button type="submit" class="custom-button">承認</button>
             </form>
             @else
-                <button type="button" class="custom-button" disabled>承認済み</button>
+                <button type="button" class="custom-button_done" disabled>承認済み</button>
             @endif
         </div>
     </div>

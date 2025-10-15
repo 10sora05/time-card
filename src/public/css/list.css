@@ -105,3 +105,26 @@
 }
 
 /* 申請一覧ページ用 ここまで */
+
+/* スタッフ別勤怠一覧ページ用 */
+
+.csv-export {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 0;
+}
+
+.csv-export-btn {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.csv-export-btn:hover {
+    background-color: #333;
+}

@@ -112,4 +112,65 @@ class AdminAttendanceController extends Controller
         return redirect()->route('admin.attendances.show', $attendance->id)
                         ->with('success', '勤怠情報が更新されました');
     }
+
+    public function exportCsv(User $user, Request $request)
+    {
+        $month = $request->query('month'); // 'YYYY-MM' 形式想定
+        if (!$month) {
+            return redirect()->back()->with('error', '対象月が指定されていません。');
+        }
+
+        $startDate = Carbon::parse($month . '-01')->startOfMonth();
+        $endDate = Carbon::parse($month . '-01')->endOfMonth();
+
+        $attendances = Attendance::where('user_id', $user->id)
+            ->whereBetween('work_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->orderBy('work_date')
+            ->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"attendance_{$user->id}_{$month}.csv\"",
+        ];
+
+        $callback = function () use ($attendances, $startDate, $endDate) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['日付', '出勤', '退勤', '休憩(時間:分)', '合計(時間:分)']);
+
+            for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+                $attendance = $attendances->firstWhere('work_date', $date->toDateString());
+
+                $startTime = $attendance && $attendance->start_time ? Carbon::parse($attendance->start_time)->format('H:i') : '';
+                $endTime = $attendance && $attendance->end_time ? Carbon::parse($attendance->end_time)->format('H:i') : '';
+
+                $break = '';
+                if ($attendance && $attendance->break_minutes !== null) {
+                    $h = floor($attendance->break_minutes / 60);
+                    $m = str_pad($attendance->break_minutes % 60, 2, '0', STR_PAD_LEFT);
+                    $break = "{$h}:{$m}";
+                }
+
+                $total = '';
+                if ($attendance && $attendance->total_minutes !== null) {
+                    $h = floor($attendance->total_minutes / 60);
+                    $m = str_pad($attendance->total_minutes % 60, 2, '0', STR_PAD_LEFT);
+                    $total = "{$h}:{$m}";
+                }
+
+                fputcsv($handle, [
+                    $date->format('Y-m-d'),
+                    $startTime,
+                    $endTime,
+                    $break,
+                    $total,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 }

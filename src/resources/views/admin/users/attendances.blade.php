@@ -96,6 +96,12 @@
                 @endforeach
             </table>
         </div>
+        <div class="csv-export">
+            <form method="GET" action="{{ route('admin.users.attendances.exportCsv', ['user' => $user->id]) }}">
+                <input type="hidden" name="month" value="{{ $targetMonth }}">
+                <button type="submit" class="csv-export-btn">CSV出力</button>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

@@ -84,3 +84,14 @@
 .time-separator {
     margin: 0 13%;
 }
+
+.custom-button_done {
+    background-color: #696969;
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    font-size: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
