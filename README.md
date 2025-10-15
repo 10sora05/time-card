@@ -112,7 +112,7 @@ password: password
 
 ## ER図
 
-<img src="ER.png" alt="ERimg">
+<img width="841" height="420" alt="ER" src="https://github.com/user-attachments/assets/3fb2b8bc-7ef0-4785-b971-bef88917c834" />
 
 
 
