@@ -93,9 +93,6 @@ class AdminAttendanceController extends Controller
 
     public function update(UpdateAttendanceRequest $request, $id)
     {
-
-        \Log::debug('更新リクエスト', $request->all());
-
         $attendance = Attendance::findOrFail($id);
 
         // 管理者が勤怠情報を更新処理
