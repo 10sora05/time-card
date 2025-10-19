@@ -40,9 +40,6 @@ class AdminAttendanceCorrectionController extends Controller
     // 承認処理
     public function update(Request $request, $id)
     {
-
-        \Log::debug('更新リクエスト', $request->all());
-
         $correction = AttendanceCorrection::findOrFail($id);
         $status = $request->input('status');
 
